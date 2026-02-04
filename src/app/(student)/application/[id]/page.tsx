@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { toast } from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { StatusTimeline } from '@/components/dashboard/StatusTimeline'
@@ -156,9 +157,42 @@ export default function ApplicationDetailPage() {
 
     if (!error) {
       setApplication((prev) => prev ? { ...prev, status: 'submitted' } : null)
+      toast.success('Dossier soumis avec succès !')
+    } else {
+      console.error('Submission error:', error)
+      toast.error(`Erreur: ${error.message} (Code: ${error.code})`)
     }
 
     setSubmitting(false)
+  }
+
+  const handleDeleteFile = async (file: FileType) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')) return
+
+    const supabase = createClient()
+
+    // 1. Supprimer du Storage
+    const { error: storageError } = await supabase.storage
+      .from('learning-agreements')
+      .remove([file.file_path])
+
+    if (storageError) {
+      toast.error('Erreur lors de la suppression du fichier (Storage)')
+      return
+    }
+
+    // 2. Supprimer de la table
+    const { error: dbError } = await supabase
+      .from('files')
+      .delete()
+      .eq('id', file.id)
+
+    if (dbError) {
+      toast.error('Erreur lors de la suppression du fichier (DB)')
+    } else {
+      setFiles((prev) => prev.filter((f) => f.id !== file.id))
+      toast.success('Fichier supprimé')
+    }
   }
 
   if (loading) {
@@ -232,60 +266,95 @@ export default function ApplicationDetailPage() {
       </div>
 
       {/* Upload Learning Agreement */}
-      <div className="rounded-xl border bg-white p-6">
-        <h2 className="font-semibold text-gray-900 mb-4">Learning Agreement (PDF)</h2>
+      <div className="space-y-6">
+        {/* Mes Documents */}
+        <div className="rounded-xl border bg-white p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">Mes Documents (Étudiant)</h2>
 
-        {canEdit && (
-          <div className="mb-4">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,application/pdf"
-              onChange={handleFileUpload}
-              className="hidden"
-              id="pdf-upload"
-            />
-            <label htmlFor="pdf-upload">
-              <Button
-                type="button"
-                variant="secondary"
-                disabled={uploading}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                {uploading ? (
-                  <>
-                    <svg className="h-4 w-4 animate-spin mr-2" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    Upload en cours...
-                  </>
-                ) : (
-                  <>
-                    <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                    </svg>
-                    Uploader mon Learning Agreement (PDF)
-                  </>
-                )}
-              </Button>
-            </label>
-            {uploadError && (
-              <p className="mt-2 text-sm text-red-600">{uploadError}</p>
-            )}
-          </div>
-        )}
+          {canEdit && (
+            <div className="mb-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,application/pdf"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="pdf-upload"
+              />
+              <label htmlFor="pdf-upload">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={uploading}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {uploading ? (
+                    <>
+                      <svg className="h-4 w-4 animate-spin mr-2" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Upload en cours...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                      </svg>
+                      Uploader mon Learning Agreement (PDF)
+                    </>
+                  )}
+                </Button>
+              </label>
+              {uploadError && (
+                <p className="mt-2 text-sm text-red-600">{uploadError}</p>
+              )}
+            </div>
+          )}
 
-        {/* Liste des fichiers */}
-        {files.length > 0 ? (
-          <div className="space-y-2">
-            {files.map((file) => (
-              <FileItem key={file.id} file={file} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500 text-sm">Aucun fichier uploadé.</p>
-        )}
+          {files.filter(f => f.uploader_id === currentUser?.id).length > 0 ? (
+            <div className="space-y-2">
+              {files.filter(f => f.uploader_id === currentUser?.id).map((file) => (
+                <FileItem
+                  key={file.id}
+                  file={file}
+                  canDelete={canEdit && file.uploader_id === currentUser?.id}
+                  onDelete={() => handleDeleteFile(file)}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm">Aucun fichier uploadé.</p>
+          )}
+        </div>
+
+        {/* Documents Responsable */}
+        <div className="rounded-xl border bg-white p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">Documents Responsable Majeure</h2>
+          {files.filter(f => f.uploader_id === application.major_head_id).length > 0 ? (
+            <div className="space-y-2">
+              {files.filter(f => f.uploader_id === application.major_head_id).map((file) => (
+                <FileItem key={file.id} file={file} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm">Aucun document.</p>
+          )}
+        </div>
+
+        {/* Documents International */}
+        <div className="rounded-xl border bg-white p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">Documents Service International</h2>
+          {files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id).length > 0 ? (
+            <div className="space-y-2">
+              {files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id).map((file) => (
+                <FileItem key={file.id} file={file} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm">Aucun document.</p>
+          )}
+        </div>
       </div>
 
       {/* Soumettre */}
@@ -398,7 +467,18 @@ export default function ApplicationDetailPage() {
   )
 }
 
-function FileItem({ file }: { file: FileType }) {
+function FileItem({
+  file,
+  canDelete,
+  onDelete
+}: {
+  file: FileType
+  canDelete?: boolean
+  onDelete?: () => void
+}) {
+
+  const [deleting, setDeleting] = useState(false)
+
   const handleDownload = async () => {
     const supabase = createClient()
     const { data } = await supabase.storage
@@ -410,21 +490,51 @@ function FileItem({ file }: { file: FileType }) {
     }
   }
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (deleting) return
+    setDeleting(true)
+    onDelete?.()
+    setDeleting(false)
+  }
+
   return (
-    <button
-      onClick={handleDownload}
-      className="flex w-full items-center gap-3 rounded-lg border bg-gray-50 p-3 text-left hover:bg-gray-100"
+    <div
+      className="flex w-full items-center gap-3 rounded-lg border bg-gray-50 p-3 text-left hover:bg-gray-100 group"
     >
-      <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-      </svg>
-      <div className="flex-1 min-w-0">
-        <p className="truncate text-sm font-medium text-gray-900">{file.file_name}</p>
-        <p className="text-xs text-gray-500">{formatFileSize(file.file_size)}</p>
-      </div>
-      <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+      <button onClick={handleDownload} className="flex-1 flex items-center gap-3 min-w-0">
+        <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+        <div className="flex-1 min-w-0 text-left">
+          <p className="truncate text-sm font-medium text-gray-900">{file.file_name}</p>
+          <p className="text-xs text-gray-500">{formatFileSize(file.file_size)}</p>
+        </div>
+      </button>
+
+      {canDelete && (
+        <button
+          onClick={handleDelete}
+          className="p-2 text-gray-400 hover:text-red-600 transition-colors rounded-full hover:bg-red-50"
+          title="Supprimer ce fichier"
+        >
+          {deleting ? (
+            <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+          ) : (
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+            </svg>
+          )}
+        </button>
+      )}
+
+      {/* Bouton download flèche est redondant avec clic principal, mais on le garde pour clarté si besoin */}
+      <svg className="h-5 w-5 text-gray-400 group-hover:text-gray-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
       </svg>
-    </button>
+    </div>
   )
 }

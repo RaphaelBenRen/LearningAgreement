@@ -10,7 +10,7 @@ import { StatusBadge } from '@/components/dashboard/StatusBadge'
 import { CourseCard } from '@/components/forms/CourseCard'
 import { MessageList } from '@/components/chat/MessageList'
 import { MessageInput } from '@/components/chat/MessageInput'
-import { FileList } from '@/components/chat/FileUpload'
+import { FileList, FileUpload } from '@/components/chat/FileUpload'
 import { REQUIRED_ECTS } from '@/lib/utils/constants'
 import type { Application, Course, Message, Profile, File as FileType } from '@/types/database'
 
@@ -70,14 +70,6 @@ export default function AdminApplicationDetailPage() {
         .single()
       setStudent(studentData)
 
-      // Cours
-      const { data: coursesData } = await supabase
-        .from('courses')
-        .select('*')
-        .eq('application_id', applicationId)
-        .order('created_at')
-      setCourses(coursesData || [])
-
       // Messages
       const { data: messagesData } = await supabase
         .from('messages')
@@ -99,13 +91,6 @@ export default function AdminApplicationDetailPage() {
 
     fetchData()
   }, [applicationId, router])
-
-  const totalEcts = courses.reduce((sum, c) => sum + c.ects, 0)
-  const validatedCourses = courses.filter((c) => c.is_validated === true)
-  const rejectedCourses = courses.filter((c) => c.is_validated === false)
-  const pendingCourses = courses.filter((c) => c.is_validated === null)
-  const allCoursesReviewed = pendingCourses.length === 0 && courses.length > 0
-  const canValidate = application?.status === 'submitted' && allCoursesReviewed && rejectedCourses.length === 0
 
   const handleValidateApplication = async () => {
     setValidating(true)
@@ -219,66 +204,14 @@ export default function AdminApplicationDetailPage() {
         <p className="text-gray-600">{application.university_city}, {application.university_country}</p>
       </div>
 
-      {/* Cours */}
-      <div className="rounded-xl border bg-white p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="font-semibold text-gray-900">Cours sélectionnés</h2>
-            <p className={`text-sm ${totalEcts >= REQUIRED_ECTS ? 'text-green-600' : 'text-orange-600'}`}>
-              {totalEcts} / {REQUIRED_ECTS} ECTS
-            </p>
-          </div>
-          <div className="flex gap-4 text-sm">
-            <span className="text-green-600">{validatedCourses.length} validés</span>
-            <span className="text-red-600">{rejectedCourses.length} refusés</span>
-            <span className="text-gray-500">{pendingCourses.length} en attente</span>
-          </div>
-        </div>
-
-        {courses.length === 0 ? (
-          <p className="text-center py-8 text-gray-500">Aucun cours dans ce dossier.</p>
-        ) : (
-          <div className="space-y-3">
-            {courses.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                canEdit={false}
-                canValidate={application.status === 'submitted'}
-                onValidationChange={(updated) => {
-                  setCourses((prev) => prev.map((c) => (c.id === updated.id ? updated : c)))
-                }}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Actions de validation */}
       {application.status === 'submitted' && (
         <div className="rounded-xl border bg-white p-6 space-y-4">
           <h2 className="font-semibold text-gray-900">Actions</h2>
-
-          {!allCoursesReviewed && (
-            <div className="rounded-lg bg-yellow-50 p-4">
-              <p className="text-sm text-yellow-800">
-                Veuillez examiner tous les cours avant de valider ou demander une révision.
-              </p>
-            </div>
-          )}
-
-          {allCoursesReviewed && rejectedCourses.length > 0 && (
-            <div className="rounded-lg bg-red-50 p-4">
-              <p className="text-sm text-red-800">
-                {rejectedCourses.length} cours refusé(s). L&apos;étudiant doit les corriger avant validation.
-              </p>
-            </div>
-          )}
-
           <div className="flex gap-4">
             <Button
               onClick={handleValidateApplication}
-              disabled={!canValidate || validating}
+              disabled={validating}
             >
               {validating ? 'Validation...' : 'Valider le dossier'}
             </Button>
@@ -286,7 +219,7 @@ export default function AdminApplicationDetailPage() {
             <Button
               variant="secondary"
               onClick={() => setShowRevisionForm(true)}
-              disabled={!allCoursesReviewed || validating}
+              disabled={validating}
             >
               Demander une révision
             </Button>
@@ -323,12 +256,36 @@ export default function AdminApplicationDetailPage() {
       )}
 
       {/* Fichiers */}
-      <div className="rounded-xl border bg-white p-6">
-        <h2 className="font-semibold text-gray-900 mb-4">Documents</h2>
-        <FileList files={files} />
-        {files.length === 0 && (
-          <p className="text-gray-500 text-sm">Aucun document joint.</p>
-        )}
+      <div className="space-y-6">
+        {/* Fichiers Étudiant */}
+        <div className="rounded-xl border bg-white p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">Documents Étudiant</h2>
+          <FileList files={files.filter(f => f.uploader_id === application.student_id)} />
+          {files.filter(f => f.uploader_id === application.student_id).length === 0 && (
+            <p className="text-gray-500 text-sm">Aucun document.</p>
+          )}
+        </div>
+
+        {/* Fichiers Responsable */}
+        <div className="rounded-xl border bg-white p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">Documents Responsable Majeure</h2>
+          <FileList files={files.filter(f => f.uploader_id === application.major_head_id)} />
+          <div className="mt-4">
+            <FileUpload
+              applicationId={applicationId}
+              onFileUploaded={(newFile) => setFiles((prev) => [newFile, ...prev])}
+            />
+          </div>
+        </div>
+
+        {/* Fichiers International */}
+        <div className="rounded-xl border bg-white p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">Documents Service International</h2>
+          <FileList files={files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id)} />
+          {files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id).length === 0 && (
+            <p className="text-gray-500 text-sm">Aucun document.</p>
+          )}
+        </div>
       </div>
 
       {/* Discussion */}
