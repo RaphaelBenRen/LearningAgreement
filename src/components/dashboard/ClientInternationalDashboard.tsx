@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { StatusBadge } from '@/components/dashboard/StatusBadge'
 import { DashboardFilterBar } from '@/components/dashboard/DashboardFilterBar'
 import type { Application, ApplicationStatus, Profile, AcademicYear, Major } from '@/types/database'
+import { NotificationBell } from '@/components/ui/NotificationBell'
 
 type ApplicationWithRelations = Application & {
     student: Profile

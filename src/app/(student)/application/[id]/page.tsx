@@ -162,6 +162,16 @@ export default function ApplicationDetailPage() {
     if (!error) {
       setApplication((prev) => prev ? { ...prev, status: 'submitted' } : null)
       toast.success('Dossier soumis avec succès !')
+
+      // Notify Major Head
+      if (application.major_head_id) {
+        await supabase.from('notifications').insert({
+          user_id: application.major_head_id,
+          application_id: applicationId,
+          message: `Nouveau dossier soumis par ${currentUser?.full_name}`,
+          link: `/admin/application/${applicationId}`
+        })
+      }
     } else {
       console.error('Submission error:', error)
       toast.error(`Erreur: ${error.message} (Code: ${error.code})`)

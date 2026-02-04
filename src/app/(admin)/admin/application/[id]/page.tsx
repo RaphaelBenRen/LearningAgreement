@@ -108,6 +108,32 @@ export default function AdminApplicationDetailPage() {
     if (!error) {
       setApplication((prev) => prev ? { ...prev, status: 'validated_major' } : null)
 
+      // Notify Student
+      if (student?.id) {
+        await supabase.from('notifications').insert({
+          user_id: student.id,
+          application_id: applicationId,
+          message: `Votre dossier a été validé par le responsable de majeure`,
+          link: `/application/${applicationId}`
+        })
+      }
+
+      // Notify International Service
+      const { data: internationalUsers } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('role', 'international')
+
+      if (internationalUsers && internationalUsers.length > 0) {
+        const notifications = internationalUsers.map(u => ({
+          user_id: u.id,
+          application_id: applicationId,
+          message: `Dossier validé par responsable (Majeure) pour ${student?.full_name}`,
+          link: `/international/application/${applicationId}`
+        }))
+        await supabase.from('notifications').insert(notifications)
+      }
+
       // Webhook notification
       try {
         await fetch('/api/webhooks', {
@@ -150,6 +176,16 @@ export default function AdminApplicationDetailPage() {
       setApplication((prev) => prev ? { ...prev, status: 'revision' } : null)
       setShowRevisionForm(false)
       setRevisionReason('')
+
+      // Notify Student
+      if (student?.id) {
+        await supabase.from('notifications').insert({
+          user_id: student.id,
+          application_id: applicationId,
+          message: `Révision demandée par le responsable de majeure`,
+          link: `/application/${applicationId}`
+        })
+      }
 
       // Recharger les messages
       const { data: messagesData } = await supabase

@@ -124,7 +124,16 @@ export default function InternationalApplicationDetailPage() {
 
     if (!error) {
       setApplication((prev) => prev ? { ...prev, status: 'validated_final' } : null)
-      // Webhook notification omitted for brevity
+
+      // Notify Student
+      if (student?.id) {
+        await supabase.from('notifications').insert({
+          user_id: student.id,
+          application_id: applicationId,
+          message: `Félicitations ! Votre Learning Agreement a été validé définitivement`,
+          link: `/application/${applicationId}`
+        })
+      }
     }
 
     setValidating(false)
@@ -154,6 +163,16 @@ export default function InternationalApplicationDetailPage() {
       setApplication((prev) => prev ? { ...prev, status: 'revision' } : null)
       setShowRevisionForm(false)
       setRevisionReason('')
+
+      // Notify Student
+      if (student?.id) {
+        await supabase.from('notifications').insert({
+          user_id: student.id,
+          application_id: applicationId,
+          message: `Révision demandée par le Service International`,
+          link: `/application/${applicationId}`
+        })
+      }
 
       // Recharger les messages
       const { data: messagesData } = await supabase
@@ -190,6 +209,16 @@ export default function InternationalApplicationDetailPage() {
 
     if (!error) {
       setApplication((prev) => prev ? { ...prev, status: 'rejected' } : null)
+
+      // Notify Student
+      if (student?.id) {
+        await supabase.from('notifications').insert({
+          user_id: student.id,
+          application_id: applicationId,
+          message: `Votre dossier a été refusé par le Service International`,
+          link: `/application/${applicationId}`
+        })
+      }
     }
 
     setValidating(false)

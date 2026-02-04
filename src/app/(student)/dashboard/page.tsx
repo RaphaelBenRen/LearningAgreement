@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { ApplicationCard } from '@/components/dashboard/ApplicationCard'
 import { StatusTimeline } from '@/components/dashboard/StatusTimeline'
+import { NotificationBell } from '@/components/ui/NotificationBell'
 
 export default async function StudentDashboard() {
   const supabase = await createClient()
