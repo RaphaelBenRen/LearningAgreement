@@ -110,6 +110,10 @@ export default function InternationalApplicationDetailPage() {
   const canValidateFinal = application?.status === 'validated_major'
 
   const handleFinalValidation = async () => {
+    if (!confirm('Confirmez-vous la validation DÉFINITIVE de ce Learning Agreement ?')) {
+      return
+    }
+
     setValidating(true)
     const supabase = createClient()
 

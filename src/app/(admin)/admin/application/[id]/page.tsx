@@ -93,6 +93,10 @@ export default function AdminApplicationDetailPage() {
   }, [applicationId, router])
 
   const handleValidateApplication = async () => {
+    if (!confirm(`Confirmez-vous la validation du dossier de ${student?.full_name} ?`)) {
+      return
+    }
+
     setValidating(true)
     const supabase = createClient()
 

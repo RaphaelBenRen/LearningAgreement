@@ -81,6 +81,14 @@ export default function NewApplicationPage() {
       return
     }
 
+    const selectedHead = majorHeads.find(h => h.id === formData.majorHeadId)
+    const confirmMessage = `Veuillez vérifier les informations :\n\n- Responsable : ${selectedHead?.full_name}\n- Université : ${formData.universityName}\n- Ville : ${formData.universityCity}\n- Pays : ${formData.universityCountry}\n\nConfirmez-vous la création de ce dossier ?`
+
+    if (!confirm(confirmMessage)) {
+      setLoading(false)
+      return
+    }
+
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
 

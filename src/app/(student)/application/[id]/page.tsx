@@ -147,8 +147,12 @@ export default function ApplicationDetailPage() {
 
   const handleSubmit = async () => {
     if (!canSubmit || submitting) return
-    setSubmitting(true)
 
+    if (!confirm('Êtes-vous sûr de vouloir soumettre votre dossier ?\n\nUne fois soumis, vous ne pourrez plus modifier vos documents tant que le responsable ne vous l\'aura pas demandé.')) {
+      return
+    }
+
+    setSubmitting(true)
     const supabase = createClient()
     const { error } = await supabase
       .from('applications')
