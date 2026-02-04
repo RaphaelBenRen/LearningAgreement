@@ -284,7 +284,7 @@ export default function AdminApplicationDetailPage() {
 
         {/* Fichiers International */}
         <div className="rounded-xl border bg-white p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Documents Service International</h2>
+          <h2 className="font-semibold text-gray-900 mb-4">Learning Agreement Signé par service Inter</h2>
           <FileList files={files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id)} />
           {files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id).length === 0 && (
             <p className="text-gray-500 text-sm">Aucun document.</p>

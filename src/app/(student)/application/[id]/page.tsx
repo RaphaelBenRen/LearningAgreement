@@ -348,7 +348,7 @@ export default function ApplicationDetailPage() {
 
         {/* Documents International */}
         <div className="rounded-xl border bg-white p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Documents Service International</h2>
+          <h2 className="font-semibold text-gray-900 mb-4">Learning Agreement Signé par service Inter</h2>
           {files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id).length > 0 ? (
             <div className="space-y-2">
               {files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id).map((file) => (

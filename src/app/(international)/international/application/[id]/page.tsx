@@ -328,18 +328,36 @@ export default function InternationalApplicationDetailPage() {
       )}
 
       {/* Fichiers */}
-      <div className="rounded-xl border bg-white p-6">
-        <h2 className="font-semibold text-gray-900 mb-4">Documents</h2>
-        <FileList files={files} />
-        <div className="mt-4">
-          <FileUpload
-            applicationId={applicationId}
-            onFileUploaded={(newFile) => setFiles((prev) => [newFile, ...prev])}
-          />
+      <div className="space-y-6">
+        {/* Fichiers Étudiant */}
+        <div className="rounded-xl border bg-white p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">Documents Étudiant</h2>
+          <FileList files={files.filter(f => f.uploader_id === application.student_id)} />
+          {files.filter(f => f.uploader_id === application.student_id).length === 0 && (
+            <p className="text-gray-500 text-sm">Aucun document.</p>
+          )}
         </div>
-        {files.length === 0 && (
-          <p className="text-gray-500 text-sm mt-2">Aucun document joint.</p>
-        )}
+
+        {/* Fichiers Responsable */}
+        <div className="rounded-xl border bg-white p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">Documents Responsable Majeure</h2>
+          <FileList files={files.filter(f => f.uploader_id === application.major_head_id)} />
+          {files.filter(f => f.uploader_id === application.major_head_id).length === 0 && (
+            <p className="text-gray-500 text-sm">Aucun document.</p>
+          )}
+        </div>
+
+        {/* Fichiers International */}
+        <div className="rounded-xl border bg-white p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">Learning Agreement Signé par service Inter</h2>
+          <FileList files={files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id)} />
+          <div className="mt-4">
+            <FileUpload
+              applicationId={applicationId}
+              onFileUploaded={(newFile) => setFiles((prev) => [newFile, ...prev])}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Discussion */}
