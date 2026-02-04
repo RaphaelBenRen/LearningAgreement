@@ -49,20 +49,21 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex w-full items-center justify-between px-10 sm:px-24">
         {steps.map((step, index) => {
           const isCompleted = currentIndex >= index
           const isCurrent = currentIndex === index
+          const isLast = index === steps.length - 1
 
           return (
-            <div key={step.status} className="flex flex-1 items-center">
+            <div key={step.status} className={`flex items-center ${isLast ? 'flex-none' : 'flex-1'}`}>
+              {/* Step Circle & Label */}
               <div className="relative flex flex-col items-center">
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
-                    isCompleted
-                      ? 'border-blue-600 bg-blue-600 text-white'
-                      : 'border-gray-300 bg-white text-gray-400'
-                  } ${isCurrent ? 'ring-2 ring-blue-200' : ''}`}
+                  className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${isCompleted
+                    ? 'border-blue-600 bg-blue-600 text-white'
+                    : 'border-gray-300 bg-white text-gray-400'
+                    } ${isCurrent ? 'ring-2 ring-blue-200' : ''}`}
                 >
                   {isCompleted && index < currentIndex ? (
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor">
@@ -73,24 +74,26 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
                   )}
                 </div>
                 <span
-                  className={`mt-2 text-xs font-medium ${
-                    isCompleted ? 'text-blue-600' : 'text-gray-400'
-                  }`}
+                  className={`absolute -bottom-6 w-32 text-center text-xs font-medium ${isCompleted ? 'text-blue-600' : 'text-gray-400'
+                    }`}
                 >
                   {step.label}
                 </span>
               </div>
-              {index < steps.length - 1 && (
+
+              {/* Connecting Line (if not last) */}
+              {!isLast && (
                 <div
-                  className={`h-0.5 flex-1 mx-2 ${
-                    currentIndex > index ? 'bg-blue-600' : 'bg-gray-200'
-                  }`}
+                  className={`h-0.5 flex-1 mx-4 ${currentIndex > index ? 'bg-blue-600' : 'bg-gray-200'
+                    }`}
                 />
               )}
             </div>
           )
         })}
       </div>
+      {/* Spacer for bottom labels */}
+      <div className="h-4" />
     </div>
   )
 }
