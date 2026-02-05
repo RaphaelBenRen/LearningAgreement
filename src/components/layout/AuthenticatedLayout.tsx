@@ -49,7 +49,7 @@ export function AuthenticatedLayout({ children, user }: AuthenticatedLayoutProps
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-slate-50 border-b-0 border-transparent pt-4">
+      <header className="sticky top-0 z-50 bg-slate-50/80 backdrop-blur-md border-b-0 border-transparent pt-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-8">
