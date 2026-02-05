@@ -88,6 +88,17 @@ export function AuthenticatedLayout({ children, user }: AuthenticatedLayoutProps
                 >
                   Tableau de bord
                 </Link>
+                {user.role === 'international' && (
+                  <Link
+                    href="/international/stats"
+                    className={`text-sm font-medium transition-colors font-serif ${pathname === '/international/stats'
+                      ? 'text-blue-900 font-bold'
+                      : 'text-slate-400 hover:text-blue-900'
+                      }`}
+                  >
+                    Statistiques
+                  </Link>
+                )}
               </nav>
               <NotificationBell />
 
