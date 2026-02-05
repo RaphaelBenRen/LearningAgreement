@@ -76,6 +76,12 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
+        <Link href="/" className="mb-6 flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-900 transition-colors">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Retour à l&apos;accueil
+        </Link>
         <div className="rounded-sm border border-slate-200 bg-white p-8 shadow-sm">
           <div className="mb-8 text-center">
             <Link href="/" className="text-2xl font-bold text-blue-900">

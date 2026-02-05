@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { StatusBadge } from '@/components/dashboard/StatusBadge'
 import { DashboardFilterBar } from '@/components/dashboard/DashboardFilterBar'
 import type { Application, ApplicationStatus, Profile, AcademicYear, Major } from '@/types/database'
@@ -19,6 +20,7 @@ interface ClientInternationalDashboardProps {
 }
 
 export function ClientInternationalDashboard({ applications, majors }: ClientInternationalDashboardProps) {
+    const router = useRouter()
     const [searchTerm, setSearchTerm] = useState('')
     const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all')
     const [sortBy, setSortBy] = useState('updated_desc')
@@ -178,7 +180,11 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
                                     {filteredApplications.map((app) => (
-                                        <tr key={app.id} className="hover:bg-gray-50">
+                                        <tr
+                                            key={app.id}
+                                            onClick={() => router.push(`/international/application/${app.id}`)}
+                                            className="hover:bg-slate-50 cursor-pointer transition-colors"
+                                        >
                                             <td className="px-6 py-4">
                                                 <p className="font-medium text-gray-900">
                                                     {app.student?.full_name}
@@ -206,6 +212,7 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                                                 <Link
                                                     href={`/international/application/${app.id}`}
                                                     className="font-medium text-blue-900 hover:text-blue-700"
+                                                    onClick={(e) => e.stopPropagation()}
                                                 >
                                                     Voir
                                                 </Link>
