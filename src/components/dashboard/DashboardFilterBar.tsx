@@ -60,7 +60,7 @@ export function DashboardFilterBar({
                     value={sortBy}
                     onChange={(e) => onSortChange(e.target.value)}
                     options={[
-                        { value: 'updated_desc', label: 'Dernière mise à jour' },
+                        { value: 'updated_desc', label: 'Mise à jour' },
                         { value: 'created_desc', label: 'Plus récent' },
                         { value: 'created_asc', label: 'Plus ancien' },
                         { value: 'name_asc', label: 'Nom étudiant (A-Z)' },

@@ -49,7 +49,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
         </div>
       )}
 
-      <div className="flex w-full items-center justify-between px-10 sm:px-24">
+      <div className="flex w-full items-center justify-between px-2 sm:px-24">
         {steps.map((step, index) => {
           const isCompleted = currentIndex >= index
           const isCurrent = currentIndex === index
@@ -74,7 +74,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
                   )}
                 </div>
                 <span
-                  className={`absolute -bottom-6 w-32 text-center text-xs font-medium ${isCompleted ? 'text-blue-900' : 'text-slate-400'
+                  className={`absolute -bottom-8 w-24 sm:w-32 text-center text-[10px] sm:text-xs font-medium leading-tight ${isCompleted ? 'text-blue-900' : 'text-slate-400'
                     }`}
                 >
                   {step.label}
@@ -84,7 +84,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
               {/* Connecting Line (if not last) */}
               {!isLast && (
                 <div
-                  className={`h-px flex-1 mx-4 ${currentIndex > index ? 'bg-slate-900' : 'bg-slate-200'
+                  className={`h-px flex-1 mx-2 sm:mx-4 ${currentIndex > index ? 'bg-slate-900' : 'bg-slate-200'
                     }`}
                 />
               )}
@@ -93,7 +93,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
         })}
       </div>
       {/* Spacer for bottom labels */}
-      <div className="h-4" />
+      <div className="h-8" />
     </div>
   )
 }

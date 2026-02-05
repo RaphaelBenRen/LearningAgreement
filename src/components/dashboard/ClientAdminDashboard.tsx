@@ -82,7 +82,7 @@ export function ClientAdminDashboard({ applications }: ClientAdminDashboardProps
             <div className="pt-2"></div>
 
             {/* Statistiques rapides */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
                     <p className="text-sm text-slate-500">En attente</p>
                     <p className="mt-1 text-3xl font-bold text-blue-900">{pendingCount}</p>
@@ -108,7 +108,7 @@ export function ClientAdminDashboard({ applications }: ClientAdminDashboardProps
                         <h2 className="mb-4 text-lg font-semibold text-blue-900 font-serif">
                             En attente de validation ({pendingApplications.length})
                         </h2>
-                        <div className="space-y-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             {pendingApplications.map((app) => (
                                 <Link
                                     key={app.id}

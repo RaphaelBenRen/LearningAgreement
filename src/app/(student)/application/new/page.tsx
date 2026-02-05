@@ -47,16 +47,39 @@ export default function NewApplicationPage() {
 
       // Vérifier si l'étudiant a déjà un dossier cette année
       const { data: { user } } = await supabase.auth.getUser()
-      if (user && year) {
-        const { data: existingApp } = await supabase
-          .from('applications')
-          .select('id')
-          .eq('student_id', user.id)
-          .eq('academic_year_id', year.id)
+      if (user) {
+        // Récupérer le profil de l'étudiant pour sa majeure
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('major_id')
+          .eq('id', user.id)
           .single()
 
-        if (existingApp) {
-          router.push(`/application/${existingApp.id}`)
+        // Filtrer les responsables selon la majeure de l'étudiant
+        if (profile?.major_id && heads) {
+          const filteredHeads = heads.filter(h => h.major_id === profile.major_id)
+          // Si on a des responsables correspondants, on ne garde qu'eux. 
+          // Sinon (cas bizarroïde), on garde la liste complète ou on gère le cas.
+          if (filteredHeads.length > 0) {
+            setMajorHeads(filteredHeads)
+            // Auto-select if only one
+            if (filteredHeads.length === 1) {
+              setFormData(prev => ({ ...prev, majorHeadId: filteredHeads[0].id }))
+            }
+          }
+        }
+
+        if (year) {
+          const { data: existingApp } = await supabase
+            .from('applications')
+            .select('id')
+            .eq('student_id', user.id)
+            .eq('academic_year_id', year.id)
+            .single()
+
+          if (existingApp) {
+            router.push(`/application/${existingApp.id}`)
+          }
         }
       }
     }

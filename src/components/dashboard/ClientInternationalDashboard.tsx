@@ -24,6 +24,7 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
     const [searchTerm, setSearchTerm] = useState('')
     const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all')
     const [sortBy, setSortBy] = useState('updated_desc')
+    const [majorFilter, setMajorFilter] = useState<string | 'all'>('all')
 
     // Stats derived from FULL list
     const statusCounts = useMemo(() => {
@@ -39,6 +40,20 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
             .filter((app) => {
                 // Status Filter
                 if (statusFilter !== 'all' && app.status !== statusFilter) return false
+
+                // Major Filter
+                if (majorFilter !== 'all') {
+                    const studentMajorId = app.student?.major_id
+                    const headMajorId = app.major_head?.major_id
+
+                    if (studentMajorId) {
+                        // Si l'étudiant a une majeure, on filtre uniquement dessus
+                        if (studentMajorId !== majorFilter) return false
+                    } else {
+                        // Sinon (étudiant sans majeure), on utilise celle du responsable
+                        if (headMajorId !== majorFilter) return false
+                    }
+                }
 
                 // Search Filter
                 const searchLower = searchTerm.toLowerCase()
@@ -67,7 +82,7 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                         return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
                 }
             })
-    }, [applications, searchTerm, statusFilter, sortBy])
+    }, [applications, searchTerm, statusFilter, sortBy, majorFilter]) // Add majorFilter dependency
 
     const waitingForFinal = applications.filter((app) => app.status === 'validated_major')
 
@@ -77,7 +92,7 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
             <div className="pt-2"></div>
 
             {/* Stats */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
                 <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
                     <p className="text-sm text-slate-500">Brouillon</p>
                     <p className="mt-1 text-3xl font-bold text-slate-400">{statusCounts.draft || 0}</p>
@@ -94,7 +109,7 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                     <p className="text-sm text-slate-500">Validé Final</p>
                     <p className="mt-1 text-3xl font-bold text-emerald-700">{statusCounts.validated_final || 0}</p>
                 </div>
-                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm col-span-2 lg:col-span-1">
                     <p className="text-sm text-slate-500">Total</p>
                     <p className="mt-1 text-3xl font-bold text-slate-900">{applications.length}</p>
                 </div>
@@ -106,7 +121,7 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                     <h2 className="mb-4 text-lg font-semibold text-blue-900 font-serif">
                         En attente de validation finale ({waitingForFinal.length})
                     </h2>
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {waitingForFinal.map((app) => (
                             <Link
                                 key={app.id}
@@ -143,15 +158,28 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
             <div>
                 <h2 className="mb-4 text-lg font-semibold text-blue-900 font-serif">Tous les dossiers</h2>
 
-                {/* Liste des majeures pour contexte */}
+                {/* Filtres par Majeure */}
                 <div className="mb-4 flex flex-wrap gap-2">
+                    <button
+                        onClick={() => setMajorFilter('all')}
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${majorFilter === 'all'
+                            ? 'bg-blue-900 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                    >
+                        Toutes
+                    </button>
                     {majors?.map((major: Major) => (
-                        <span
+                        <button
                             key={major.id}
-                            className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600"
+                            onClick={() => setMajorFilter(major.id)}
+                            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${majorFilter === major.id
+                                ? 'bg-blue-900 text-white'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                }`}
                         >
                             {major.name}
-                        </span>
+                        </button>
                     ))}
                 </div>
 
@@ -173,52 +201,55 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                                         <th className="px-6 py-3">Étudiant</th>
                                         <th className="px-6 py-3">Université</th>
                                         <th className="px-6 py-3">Responsable</th>
+                                        <th className="px-6 py-3">Majeure</th>
                                         <th className="px-6 py-3">Statut</th>
                                         <th className="px-6 py-3">Année</th>
-                                        <th className="px-6 py-3"></th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                    {filteredApplications.map((app) => (
-                                        <tr
-                                            key={app.id}
-                                            onClick={() => router.push(`/international/application/${app.id}`)}
-                                            className="hover:bg-slate-50 cursor-pointer transition-colors"
-                                        >
-                                            <td className="px-6 py-4">
-                                                <p className="font-medium text-gray-900">
-                                                    {app.student?.full_name}
-                                                </p>
-                                                <p className="text-xs text-gray-500">
-                                                    {app.student?.email}
-                                                </p>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <p className="text-sm text-gray-900">{app.university_name}</p>
-                                                <p className="text-xs text-gray-500">
-                                                    {app.university_city}, {app.university_country}
-                                                </p>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-600">
-                                                {app.major_head?.full_name}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <StatusBadge status={app.status} />
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">
-                                                {app.academic_year?.year}
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <Link
-                                                    href={`/international/application/${app.id}`}
-                                                    className="font-medium text-blue-900 hover:text-blue-700"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    Voir
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {filteredApplications.map((app) => {
+                                        // Helper to find major name
+                                        const studentMajor = majors.find(m => m.id === app.student?.major_id)
+                                        const headMajor = majors.find(m => m.id === app.major_head?.major_id)
+                                        const displayMajor = studentMajor?.name || headMajor?.name || '-'
+                                        const isInferred = !studentMajor && headMajor
+
+                                        return (
+                                            <tr
+                                                key={app.id}
+                                                onClick={() => router.push(`/international/application/${app.id}`)}
+                                                className="hover:bg-slate-50 cursor-pointer transition-colors"
+                                            >
+                                                <td className="px-6 py-4">
+                                                    <p className="font-medium text-gray-900">
+                                                        {app.student?.full_name}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                        {app.student?.email}
+                                                    </p>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <p className="text-sm text-gray-900">{app.university_name}</p>
+                                                    <p className="text-xs text-gray-500">
+                                                        {app.university_city}, {app.university_country}
+                                                    </p>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-600">
+                                                    {app.major_head?.full_name}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-600">
+                                                    {displayMajor}
+                                                    {isInferred && <span className="ml-1 text-xs text-slate-400" title="Déduit du responsable">(R)</span>}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <StatusBadge status={app.status} />
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-500">
+                                                    {app.academic_year?.year}
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
                                 </tbody>
                             </table>
                         </div>

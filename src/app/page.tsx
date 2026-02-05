@@ -107,51 +107,51 @@ export default function Home() {
           <h3 className="text-center text-2xl font-bold text-blue-900 font-serif">
             Comment ça marche ?
           </h3>
-          <div className="mt-12 flex w-full items-center justify-between px-10 sm:px-24">
+          <div className="mt-12 grid grid-cols-2 gap-x-2 gap-y-16 px-1 md:flex md:gap-0 md:w-full md:items-center md:justify-between md:px-10 lg:px-24">
             {/* Step 1 */}
-            <div className="flex flex-1 items-center">
-              <div className="relative flex flex-col items-center">
+            <div className="flex md:flex-1 items-center justify-center md:justify-start">
+              <div className="relative flex flex-col items-center w-full md:w-auto">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full border border-blue-600 bg-blue-600 text-white font-bold">
                   1
                 </div>
-                <span className="absolute -bottom-10 w-40 text-center text-sm font-medium text-blue-900 font-serif">Créez votre compte</span>
-                <span className="absolute -bottom-16 w-40 text-center text-xs text-gray-500">Avec votre email ECE</span>
+                <span className="absolute -bottom-12 w-full md:w-40 text-center text-sm font-medium text-blue-900 font-serif leading-tight">Créez votre compte</span>
+                <span className="absolute -bottom-20 w-full md:w-40 text-center text-xs text-gray-500 hidden sm:block">Avec votre email ECE</span>
               </div>
-              <div className="h-px flex-1 mx-4 bg-slate-200" />
+              <div className="hidden md:block h-px flex-1 mx-4 bg-slate-200" />
             </div>
 
             {/* Step 2 */}
-            <div className="flex flex-1 items-center">
-              <div className="relative flex flex-col items-center">
+            <div className="flex md:flex-1 items-center justify-center md:justify-start">
+              <div className="relative flex flex-col items-center w-full md:w-auto">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full border border-blue-600 bg-blue-600 text-white font-bold">
                   2
                 </div>
-                <span className="absolute -bottom-10 w-40 text-center text-sm font-medium text-blue-900 font-serif">Saisissez vos cours</span>
-                <span className="absolute -bottom-16 w-40 text-center text-xs text-gray-500">Avec tous les détails</span>
+                <span className="absolute -bottom-12 w-full md:w-40 text-center text-sm font-medium text-blue-900 font-serif leading-tight">Saisissez vos cours</span>
+                <span className="absolute -bottom-20 w-full md:w-40 text-center text-xs text-gray-500 hidden sm:block">Avec tous les détails</span>
               </div>
-              <div className="h-px flex-1 mx-4 bg-slate-200" />
+              <div className="hidden md:block h-px flex-1 mx-4 bg-slate-200" />
             </div>
 
             {/* Step 3 */}
-            <div className="flex flex-1 items-center">
-              <div className="relative flex flex-col items-center">
+            <div className="flex md:flex-1 items-center justify-center md:justify-start">
+              <div className="relative flex flex-col items-center w-full md:w-auto">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full border border-blue-600 bg-blue-600 text-white font-bold">
                   3
                 </div>
-                <span className="absolute -bottom-10 w-40 text-center text-sm font-medium text-blue-900 font-serif">Soumettez au responsable</span>
-                <span className="absolute -bottom-16 w-40 text-center text-xs text-gray-500">De votre majeure</span>
+                <span className="absolute -bottom-12 w-full md:w-40 text-center text-sm font-medium text-blue-900 font-serif leading-tight">Soumettez au responsable</span>
+                <span className="absolute -bottom-20 w-full md:w-40 text-center text-xs text-gray-500 hidden sm:block">De votre majeure</span>
               </div>
-              <div className="h-px flex-1 mx-4 bg-slate-200" />
+              <div className="hidden md:block h-px flex-1 mx-4 bg-slate-200" />
             </div>
 
             {/* Step 4 */}
-            <div className="flex flex-none items-center">
-              <div className="relative flex flex-col items-center">
+            <div className="flex md:flex-none items-center justify-center">
+              <div className="relative flex flex-col items-center w-full md:w-auto">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full border border-blue-600 bg-blue-600 text-white font-bold">
                   4
                 </div>
-                <span className="absolute -bottom-10 w-40 text-center text-sm font-medium text-blue-900 font-serif">Validation finale</span>
-                <span className="absolute -bottom-16 w-40 text-center text-xs text-gray-500">Par le service inter</span>
+                <span className="absolute -bottom-12 w-full md:w-40 text-center text-sm font-medium text-blue-900 font-serif leading-tight">Validation finale</span>
+                <span className="absolute -bottom-20 w-full md:w-40 text-center text-xs text-gray-500 hidden sm:block">Par le service inter</span>
               </div>
             </div>
           </div>
