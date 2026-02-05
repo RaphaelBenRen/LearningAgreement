@@ -113,7 +113,7 @@ export function NotificationBell() {
                         className="fixed inset-0 z-40"
                         onClick={() => setIsOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 z-50 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-sm border border-slate-200 bg-white shadow-xl">
+                    <div className="fixed inset-x-4 top-16 z-50 mx-auto w-auto max-w-sm rounded-sm border border-slate-200 bg-white shadow-xl sm:absolute sm:right-0 sm:inset-auto sm:mt-2 sm:w-80">
                         <div className="border-b border-slate-100 px-4 py-3 bg-slate-50">
                             <h3 className="text-sm font-semibold text-slate-900">Notifications</h3>
                         </div>
