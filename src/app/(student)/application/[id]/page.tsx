@@ -236,26 +236,26 @@ export default function ApplicationDetailPage() {
             </svg>
             Retour
           </Link>
-          <h1 className="mt-2 text-2xl font-bold text-gray-900">{application.university_name}</h1>
-          <p className="text-gray-600">{application.university_city}, {application.university_country}</p>
+          <h1 className="mt-2 text-2xl font-bold text-blue-900 font-serif">{application.university_name}</h1>
+          <p className="text-slate-600">{application.university_city}, {application.university_country}</p>
         </div>
         <StatusBadge status={application.status} />
       </div>
 
       {/* Timeline */}
-      <div className="rounded-xl border bg-white p-6">
+      <div className="rounded-sm border border-slate-200 bg-white p-6">
         <StatusTimeline currentStatus={application.status} />
       </div>
 
       {/* Infos responsable */}
-      <div className="rounded-xl border bg-white p-6">
-        <h2 className="font-semibold text-gray-900">Responsable de majeure</h2>
-        <p className="mt-1 text-gray-600">{majorHead?.full_name || 'Non défini'}</p>
-        <p className="text-sm text-gray-500">{majorHead?.email}</p>
+      <div className="rounded-sm border border-slate-200 bg-white p-6">
+        <h2 className="font-semibold text-blue-900">Responsable de majeure</h2>
+        <p className="mt-1 text-slate-600">{majorHead?.full_name || 'Non défini'}</p>
+        <p className="text-sm text-slate-500">{majorHead?.email}</p>
       </div>
 
       {/* Guide - Rappel des informations */}
-      <div className="rounded-xl border border-blue-200 bg-blue-50 p-6">
+      <div className="rounded-sm border border-blue-200 bg-blue-50 p-6">
         <h2 className="font-semibold text-blue-900 flex items-center gap-2">
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
@@ -282,8 +282,8 @@ export default function ApplicationDetailPage() {
       {/* Upload Learning Agreement */}
       <div className="space-y-6">
         {/* Mes Documents */}
-        <div className="rounded-xl border bg-white p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Mes Documents (Étudiant)</h2>
+        <div className="rounded-sm border border-slate-200 bg-white p-6">
+          <h2 className="font-semibold text-blue-900 mb-4">Mes Documents (Étudiant)</h2>
 
           {canEdit && (
             <div className="mb-4">
@@ -343,8 +343,8 @@ export default function ApplicationDetailPage() {
         </div>
 
         {/* Documents Responsable */}
-        <div className="rounded-xl border bg-white p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Documents Responsable Majeure</h2>
+        <div className="rounded-sm border border-slate-200 bg-white p-6">
+          <h2 className="font-semibold text-blue-900 mb-4">Documents Responsable Majeure</h2>
           {files.filter(f => f.uploader_id === application.major_head_id).length > 0 ? (
             <div className="space-y-2">
               {files.filter(f => f.uploader_id === application.major_head_id).map((file) => (
@@ -357,8 +357,8 @@ export default function ApplicationDetailPage() {
         </div>
 
         {/* Documents International */}
-        <div className="rounded-xl border bg-white p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Learning Agreement Signé par service Inter</h2>
+        <div className="rounded-sm border border-slate-200 bg-white p-6">
+          <h2 className="font-semibold text-blue-900 mb-4">Learning Agreement Signé par service Inter</h2>
           {files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id).length > 0 ? (
             <div className="space-y-2">
               {files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id).map((file) => (
@@ -373,8 +373,8 @@ export default function ApplicationDetailPage() {
 
       {/* Soumettre */}
       {canEdit && (
-        <div className="rounded-xl border bg-white p-6">
-          <h2 className="font-semibold text-gray-900">Soumettre pour validation</h2>
+        <div className="rounded-sm border border-slate-200 bg-white p-6">
+          <h2 className="font-semibold text-blue-900">Soumettre pour validation</h2>
           <p className="mt-1 text-sm text-gray-600">
             {files.length === 0
               ? 'Uploadez votre Learning Agreement en PDF avant de soumettre.'
@@ -392,7 +392,7 @@ export default function ApplicationDetailPage() {
 
       {/* Statut après soumission */}
       {application.status === 'submitted' && (
-        <div className="rounded-xl border border-blue-200 bg-blue-50 p-6">
+        <div className="rounded-sm border border-blue-200 bg-blue-50 p-6">
           <h2 className="font-semibold text-blue-900">En attente de validation</h2>
           <p className="mt-1 text-sm text-blue-700">
             Votre Learning Agreement a été soumis. Votre responsable de majeure va l&apos;examiner.
@@ -401,7 +401,7 @@ export default function ApplicationDetailPage() {
       )}
 
       {application.status === 'validated_major' && (
-        <div className="rounded-xl border border-purple-200 bg-purple-50 p-6">
+        <div className="rounded-sm border border-purple-200 bg-purple-50 p-6">
           <h2 className="font-semibold text-purple-900">Validé par le responsable</h2>
           <p className="mt-1 text-sm text-purple-700">
             Votre Learning Agreement a été validé par votre responsable de majeure.
@@ -411,7 +411,7 @@ export default function ApplicationDetailPage() {
       )}
 
       {application.status === 'validated_final' && (
-        <div className="rounded-xl border border-green-200 bg-green-50 p-6">
+        <div className="rounded-sm border border-green-200 bg-green-50 p-6">
           <div className="flex items-center gap-3">
             <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -428,7 +428,7 @@ export default function ApplicationDetailPage() {
 
       {/* Guide étapes suivantes */}
       {(application.status === 'validated_major' || application.status === 'validated_final') && (
-        <div className="rounded-xl border bg-gray-50 p-6">
+        <div className="rounded-sm border bg-slate-50 border-slate-200 p-6">
           <h2 className="font-semibold text-gray-900">Prochaines étapes</h2>
           <div className="mt-4 text-sm text-gray-700 space-y-3">
             <div>
@@ -449,9 +449,9 @@ export default function ApplicationDetailPage() {
 
       {/* Guide modifications */}
       {application.status === 'revision' && (
-        <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-6">
-          <h2 className="font-semibold text-yellow-900">Modifications demandées</h2>
-          <p className="mt-1 text-sm text-yellow-700">
+        <div className="rounded-sm border border-amber-200 bg-amber-50 p-6">
+          <h2 className="font-semibold text-amber-900">Modifications demandées</h2>
+          <p className="mt-1 text-sm text-amber-700">
             Votre responsable a demandé des modifications. Consultez les messages ci-dessous,
             corrigez votre Learning Agreement et re-soumettez-le.
           </p>
@@ -467,8 +467,8 @@ export default function ApplicationDetailPage() {
       )}
 
       {/* Discussion */}
-      <div className="rounded-xl border bg-white p-6">
-        <h2 className="font-semibold text-gray-900 mb-4">Discussion avec le responsable</h2>
+      <div className="rounded-sm border border-slate-200 bg-white p-6">
+        <h2 className="font-semibold text-blue-900 mb-4">Discussion avec le responsable</h2>
         <div className="max-h-96 overflow-y-auto mb-4">
           <MessageList messages={messages} currentUserId={currentUser?.id || ''} />
         </div>
@@ -514,7 +514,7 @@ function FileItem({
 
   return (
     <div
-      className="flex w-full items-center gap-3 rounded-lg border bg-gray-50 p-3 text-left hover:bg-gray-100 group"
+      className="flex w-full items-center gap-3 rounded-sm border bg-slate-50 border-slate-200 p-3 text-left hover:bg-slate-100 group"
     >
       <button onClick={handleDownload} className="flex-1 flex items-center gap-3 min-w-0">
         <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">

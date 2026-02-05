@@ -16,14 +16,14 @@ export function ApplicationCard({ application, href, showStudent = false }: Appl
   return (
     <Link
       href={href}
-      className="block rounded-xl border bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+      className="block rounded-sm border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md hover:border-blue-200"
     >
       <div className="flex items-start justify-between">
         <div>
           {showStudent && application.student && (
-            <p className="font-semibold text-gray-900">{application.student.full_name}</p>
+            <p className="font-semibold text-blue-900">{application.student.full_name}</p>
           )}
-          <p className={`${showStudent ? 'text-sm text-gray-600' : 'font-semibold text-gray-900'}`}>
+          <p className={`${showStudent ? 'text-sm text-slate-600' : 'font-semibold text-blue-900'}`}>
             {application.university_name}
           </p>
           <p className="text-sm text-gray-500">

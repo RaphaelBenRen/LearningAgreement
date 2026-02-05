@@ -71,40 +71,37 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
 
     return (
         <div className="space-y-8">
-            {/* Header */}
-            <div>
-                <h1 className="text-2xl font-bold text-gray-900">Service International</h1>
-                <p className="mt-1 text-gray-600">Vue globale de tous les Learning Agreements</p>
-            </div>
+            {/* Header supprimé car déplacé dans le layout */}
+            <div className="pt-2"></div>
 
             {/* Stats */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                <div className="rounded-xl border bg-white p-6">
-                    <p className="text-sm text-gray-500">Brouillon</p>
-                    <p className="mt-1 text-3xl font-bold text-gray-400">{statusCounts.draft || 0}</p>
+                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm text-slate-500">Brouillon</p>
+                    <p className="mt-1 text-3xl font-bold text-slate-400">{statusCounts.draft || 0}</p>
                 </div>
-                <div className="rounded-xl border bg-white p-6">
-                    <p className="text-sm text-gray-500">Soumis</p>
-                    <p className="mt-1 text-3xl font-bold text-blue-600">{statusCounts.submitted || 0}</p>
+                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm text-slate-500">Soumis</p>
+                    <p className="mt-1 text-3xl font-bold text-blue-900">{statusCounts.submitted || 0}</p>
                 </div>
-                <div className="rounded-xl border bg-white p-6">
-                    <p className="text-sm text-gray-500">Validé Respo</p>
-                    <p className="mt-1 text-3xl font-bold text-purple-600">{statusCounts.validated_major || 0}</p>
+                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm text-slate-500">Validé Respo</p>
+                    <p className="mt-1 text-3xl font-bold text-purple-900">{statusCounts.validated_major || 0}</p>
                 </div>
-                <div className="rounded-xl border bg-white p-6">
-                    <p className="text-sm text-gray-500">Validé Final</p>
-                    <p className="mt-1 text-3xl font-bold text-green-600">{statusCounts.validated_final || 0}</p>
+                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm text-slate-500">Validé Final</p>
+                    <p className="mt-1 text-3xl font-bold text-emerald-700">{statusCounts.validated_final || 0}</p>
                 </div>
-                <div className="rounded-xl border bg-white p-6">
-                    <p className="text-sm text-gray-500">Total</p>
-                    <p className="mt-1 text-3xl font-bold text-gray-900">{applications.length}</p>
+                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm text-slate-500">Total</p>
+                    <p className="mt-1 text-3xl font-bold text-slate-900">{applications.length}</p>
                 </div>
             </div>
 
             {/* Dossiers en attente de validation finale */}
             {waitingForFinal.length > 0 && (
                 <div>
-                    <h2 className="mb-4 text-lg font-semibold text-gray-900">
+                    <h2 className="mb-4 text-lg font-semibold text-blue-900 font-serif">
                         En attente de validation finale ({waitingForFinal.length})
                     </h2>
                     <div className="space-y-4">
@@ -112,23 +109,23 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                             <Link
                                 key={app.id}
                                 href={`/international/application/${app.id}`}
-                                className="block rounded-xl border-2 border-purple-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+                                className="block rounded-sm border-2 border-purple-100 bg-white p-6 shadow-sm transition-shadow hover:shadow-md hover:border-purple-200"
                             >
                                 <div className="flex items-start justify-between">
                                     <div>
-                                        <p className="font-semibold text-gray-900">
+                                        <p className="font-semibold text-blue-900">
                                             {app.student?.full_name}
                                         </p>
-                                        <p className="text-sm text-gray-600">
+                                        <p className="text-sm text-slate-600">
                                             {app.university_name} - {app.university_city}, {app.university_country}
                                         </p>
-                                        <p className="mt-1 text-xs text-gray-500">
+                                        <p className="mt-1 text-xs text-slate-500">
                                             Responsable : {app.major_head?.full_name}
                                         </p>
                                     </div>
                                     <StatusBadge status={app.status} />
                                 </div>
-                                <div className="mt-4 flex items-center gap-2 text-sm text-purple-600">
+                                <div className="mt-4 flex items-center gap-2 text-sm text-purple-800 font-medium">
                                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
@@ -142,7 +139,7 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
 
             {/* Tous les dossiers avec filtres */}
             <div>
-                <h2 className="mb-4 text-lg font-semibold text-gray-900">Tous les dossiers</h2>
+                <h2 className="mb-4 text-lg font-semibold text-blue-900 font-serif">Tous les dossiers</h2>
 
                 {/* Liste des majeures pour contexte */}
                 <div className="mb-4 flex flex-wrap gap-2">
@@ -167,10 +164,10 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
 
                 <div className="mt-6">
                     {filteredApplications.length > 0 ? (
-                        <div className="overflow-x-auto rounded-xl border bg-white shadow-sm">
+                        <div className="overflow-x-auto rounded-sm border border-slate-200 bg-white shadow-sm">
                             <table className="w-full">
                                 <thead>
-                                    <tr className="border-b bg-gray-50 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <tr className="border-b bg-slate-50 text-left text-xs font-medium uppercase tracking-wider text-blue-900">
                                         <th className="px-6 py-3">Étudiant</th>
                                         <th className="px-6 py-3">Université</th>
                                         <th className="px-6 py-3">Responsable</th>
@@ -208,7 +205,7 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                                             <td className="px-6 py-4 text-right">
                                                 <Link
                                                     href={`/international/application/${app.id}`}
-                                                    className="font-medium text-blue-600 hover:text-blue-700"
+                                                    className="font-medium text-blue-900 hover:text-blue-700"
                                                 >
                                                     Voir
                                                 </Link>
@@ -219,8 +216,8 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                             </table>
                         </div>
                     ) : (
-                        <div className="rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
-                            <p className="text-gray-500">Aucun dossier trouvé pour ces critères</p>
+                        <div className="rounded-sm border-2 border-dashed border-slate-300 p-12 text-center">
+                            <p className="text-slate-500">Aucun dossier trouvé pour ces critères</p>
                         </div>
                     )}
                 </div>

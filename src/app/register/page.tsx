@@ -81,9 +81,9 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
         <div className="w-full max-w-md">
-          <div className="rounded-xl bg-white p-8 shadow-lg text-center">
+          <div className="rounded-sm border border-slate-200 bg-white p-8 shadow-sm text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
               <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -96,7 +96,7 @@ export default function RegisterPage() {
             </p>
             <Link
               href="/login"
-              className="mt-6 inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
+              className="mt-6 inline-block rounded-sm bg-blue-900 px-6 py-3 font-semibold text-white hover:bg-blue-800 transition-colors"
             >
               Retour à la connexion
             </Link>
@@ -107,9 +107,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
       <div className="w-full max-w-md">
-        <div className="rounded-xl bg-white p-8 shadow-lg">
+        <div className="rounded-sm border border-slate-200 bg-white p-8 shadow-sm">
           <div className="mb-8 text-center">
             <Link href="/" className="text-2xl font-bold text-blue-900">
               Learning Agreement
@@ -119,7 +119,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleRegister} className="space-y-5">
             {error && (
-              <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600">
+              <div className="rounded-sm bg-red-50 p-4 text-sm text-red-600">
                 {error}
               </div>
             )}
@@ -134,7 +134,7 @@ export default function RegisterPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-sm border border-slate-300 px-4 py-3 focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
                 placeholder="Jean Dupont"
               />
             </div>
@@ -149,7 +149,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-sm border border-slate-300 px-4 py-3 focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
                 placeholder="prenom.nom@edu.ece.fr"
               />
               <p className="mt-1 text-xs text-gray-500">Utilisez votre email @ece.fr ou @edu.ece.fr</p>
@@ -164,7 +164,7 @@ export default function RegisterPage() {
                 value={majorId}
                 onChange={(e) => setMajorId(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-sm border border-slate-300 px-4 py-3 focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
               >
                 <option value="">Sélectionnez votre majeure</option>
                 {majors.map((major) => (
@@ -186,7 +186,7 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={8}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-sm border border-slate-300 px-4 py-3 focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
                 placeholder="••••••••"
               />
               <p className="mt-1 text-xs text-gray-500">Minimum 8 caractères</p>
@@ -202,7 +202,7 @@ export default function RegisterPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-sm border border-slate-300 px-4 py-3 focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
                 placeholder="••••••••"
               />
             </div>
@@ -210,7 +210,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-sm bg-blue-900 py-3 font-semibold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
             >
               {loading ? 'Inscription...' : 'Créer mon compte'}
             </button>

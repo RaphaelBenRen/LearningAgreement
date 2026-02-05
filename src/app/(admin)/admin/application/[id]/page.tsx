@@ -219,35 +219,35 @@ export default function AdminApplicationDetailPage() {
         <div>
           <Link
             href="/admin/dashboard"
-            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+            className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-blue-900 transition-colors"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
             Retour
           </Link>
-          <h1 className="mt-2 text-2xl font-bold text-gray-900">{student?.full_name}</h1>
-          <p className="text-gray-600">{student?.email}</p>
+          <h1 className="mt-2 text-2xl font-bold text-blue-900 font-serif">{student?.full_name}</h1>
+          <p className="text-slate-600">{student?.email}</p>
         </div>
         <StatusBadge status={application.status} />
       </div>
 
       {/* Timeline */}
-      <div className="rounded-xl border bg-white p-6">
+      <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
         <StatusTimeline currentStatus={application.status} />
       </div>
 
       {/* Infos université */}
-      <div className="rounded-xl border bg-white p-6">
-        <h2 className="font-semibold text-gray-900">Université d&apos;accueil</h2>
-        <p className="mt-1 text-gray-900">{application.university_name}</p>
-        <p className="text-gray-600">{application.university_city}, {application.university_country}</p>
+      <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="font-semibold text-blue-900 font-serif">Université d&apos;accueil</h2>
+        <p className="mt-1 text-slate-900">{application.university_name}</p>
+        <p className="text-slate-600">{application.university_city}, {application.university_country}</p>
       </div>
 
       {/* Actions de validation */}
       {application.status === 'submitted' && (
-        <div className="rounded-xl border bg-white p-6 space-y-4">
-          <h2 className="font-semibold text-gray-900">Actions</h2>
+        <div className="rounded-sm border border-slate-200 bg-white p-6 space-y-4">
+          <h2 className="font-semibold text-blue-900 font-serif">Actions</h2>
           <div className="flex gap-4">
             <Button
               onClick={handleValidateApplication}
@@ -266,9 +266,9 @@ export default function AdminApplicationDetailPage() {
           </div>
 
           {showRevisionForm && (
-            <div className="rounded-lg bg-gray-50 p-4 space-y-3">
+            <div className="rounded-sm bg-slate-50 p-4 space-y-3">
               <textarea
-                className="w-full rounded-lg border p-3 text-sm"
+                className="w-full rounded-sm border border-slate-300 p-3 text-sm focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
                 placeholder="Expliquez les modifications attendues..."
                 value={revisionReason}
                 onChange={(e) => setRevisionReason(e.target.value)}
@@ -298,8 +298,8 @@ export default function AdminApplicationDetailPage() {
       {/* Fichiers */}
       <div className="space-y-6">
         {/* Fichiers Étudiant */}
-        <div className="rounded-xl border bg-white p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Documents Étudiant</h2>
+        <div className="rounded-sm border border-slate-200 bg-white p-6">
+          <h2 className="font-semibold text-blue-900 font-serif mb-4">Documents Étudiant</h2>
           <FileList files={files.filter(f => f.uploader_id === application.student_id)} />
           {files.filter(f => f.uploader_id === application.student_id).length === 0 && (
             <p className="text-gray-500 text-sm">Aucun document.</p>
@@ -307,8 +307,8 @@ export default function AdminApplicationDetailPage() {
         </div>
 
         {/* Fichiers Responsable */}
-        <div className="rounded-xl border bg-white p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Documents Responsable Majeure</h2>
+        <div className="rounded-sm border border-slate-200 bg-white p-6">
+          <h2 className="font-semibold text-blue-900 font-serif mb-4">Documents Responsable Majeure</h2>
           <FileList files={files.filter(f => f.uploader_id === application.major_head_id)} />
           <div className="mt-4">
             <FileUpload
@@ -319,8 +319,8 @@ export default function AdminApplicationDetailPage() {
         </div>
 
         {/* Fichiers International */}
-        <div className="rounded-xl border bg-white p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Learning Agreement Signé par service Inter</h2>
+        <div className="rounded-sm border border-slate-200 bg-white p-6">
+          <h2 className="font-semibold text-blue-900 font-serif mb-4">Learning Agreement Signé par service Inter</h2>
           <FileList files={files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id)} />
           {files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id).length === 0 && (
             <p className="text-gray-500 text-sm">Aucun document.</p>
@@ -329,8 +329,8 @@ export default function AdminApplicationDetailPage() {
       </div>
 
       {/* Discussion */}
-      <div className="rounded-xl border bg-white p-6">
-        <h2 className="font-semibold text-gray-900 mb-4">Discussion</h2>
+      <div className="rounded-sm border border-slate-200 bg-white p-6">
+        <h2 className="font-semibold text-blue-900 font-serif mb-4">Discussion</h2>
         <div className="max-h-96 overflow-y-auto mb-4">
           <MessageList messages={messages} currentUserId={currentUser?.id || ''} />
         </div>

@@ -18,7 +18,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={id}
           className={`
-            block w-full rounded-lg border px-4 py-2.5 resize-none
+            block w-full rounded-sm border px-4 py-2.5 resize-none
             focus:outline-none focus:ring-2 focus:ring-offset-0
             ${error
               ? 'border-red-300 focus:border-red-500 focus:ring-red-500'

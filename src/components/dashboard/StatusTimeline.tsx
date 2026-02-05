@@ -27,7 +27,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
 
   if (isRejected) {
     return (
-      <div className="flex items-center gap-2 rounded-lg bg-red-50 p-4">
+      <div className="flex items-center gap-2 rounded-sm bg-red-50 p-4">
         <svg className="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -39,7 +39,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
   return (
     <div className="w-full">
       {isRevision && (
-        <div className="mb-4 flex items-center gap-2 rounded-lg bg-yellow-50 p-3">
+        <div className="mb-4 flex items-center gap-2 rounded-sm bg-yellow-50 p-3">
           <svg className="h-5 w-5 text-yellow-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
           </svg>
@@ -60,9 +60,9 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
               {/* Step Circle & Label */}
               <div className="relative flex flex-col items-center">
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${isCompleted
+                  className={`flex h-8 w-8 items-center justify-center rounded-full border ${isCompleted
                     ? 'border-blue-600 bg-blue-600 text-white'
-                    : 'border-gray-300 bg-white text-gray-400'
+                    : 'border-blue-200 bg-blue-50 text-blue-400'
                     } ${isCurrent ? 'ring-2 ring-blue-200' : ''}`}
                 >
                   {isCompleted && index < currentIndex ? (
@@ -74,7 +74,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
                   )}
                 </div>
                 <span
-                  className={`absolute -bottom-6 w-32 text-center text-xs font-medium ${isCompleted ? 'text-blue-600' : 'text-gray-400'
+                  className={`absolute -bottom-6 w-32 text-center text-xs font-medium ${isCompleted ? 'text-blue-900' : 'text-slate-400'
                     }`}
                 >
                   {step.label}
@@ -84,7 +84,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
               {/* Connecting Line (if not last) */}
               {!isLast && (
                 <div
-                  className={`h-0.5 flex-1 mx-4 ${currentIndex > index ? 'bg-blue-600' : 'bg-gray-200'
+                  className={`h-px flex-1 mx-4 ${currentIndex > index ? 'bg-slate-900' : 'bg-slate-200'
                     }`}
                 />
               )}

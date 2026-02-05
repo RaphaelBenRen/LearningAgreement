@@ -76,7 +76,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
-        <div className="rounded-xl bg-white p-8 shadow-lg">
+        <div className="rounded-sm border border-slate-200 bg-white p-8 shadow-sm">
           <div className="mb-8 text-center">
             <Link href="/" className="text-2xl font-bold text-blue-900">
               Learning Agreement
@@ -86,7 +86,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-6">
             {error && (
-              <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600">
+              <div className="rounded-sm bg-red-50 p-4 text-sm text-red-600">
                 {error}
               </div>
             )}
@@ -101,7 +101,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-sm border border-slate-300 px-4 py-3 focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
                 placeholder="prenom.nom@edu.ece.fr"
               />
             </div>
@@ -116,7 +116,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-sm border border-slate-300 px-4 py-3 focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
                 placeholder="••••••••"
               />
             </div>
@@ -124,7 +124,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-sm bg-blue-900 py-3 font-semibold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
             >
               {loading ? 'Connexion...' : 'Se connecter'}
             </button>

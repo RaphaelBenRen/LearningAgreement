@@ -22,7 +22,7 @@ export function DashboardFilterBar({
     onSortChange,
 }: DashboardFilterBarProps) {
     return (
-        <div className="flex flex-col gap-4 rounded-xl border bg-white p-4 shadow-sm md:flex-row md:items-end">
+        <div className="flex flex-col gap-4 rounded-sm border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-end">
             <div className="flex-1">
                 <Input
                     id="search"
@@ -30,6 +30,7 @@ export function DashboardFilterBar({
                     placeholder="Nom étudiant, Ville, Université..."
                     value={searchTerm}
                     onChange={(e) => onSearchChange(e.target.value)}
+                    className="rounded-sm border-slate-300 focus:border-blue-900 focus:ring-blue-900"
                 />
             </div>
 
@@ -48,6 +49,7 @@ export function DashboardFilterBar({
                         { value: 'validated_final', label: 'Validé (Final)' },
                         { value: 'rejected', label: 'Refusé' },
                     ]}
+                    className="rounded-sm border-slate-300 focus:border-blue-900 focus:ring-blue-900"
                 />
             </div>
 
@@ -63,6 +65,7 @@ export function DashboardFilterBar({
                         { value: 'created_asc', label: 'Plus ancien' },
                         { value: 'name_asc', label: 'Nom étudiant (A-Z)' },
                     ]}
+                    className="rounded-sm border-slate-300 focus:border-blue-900 focus:ring-blue-900"
                 />
             </div>
         </div>

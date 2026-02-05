@@ -138,15 +138,15 @@ export default function NewApplicationPage() {
         </Link>
       </div>
 
-      <div className="rounded-xl border bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-bold text-gray-900">Créer mon dossier Learning Agreement</h1>
-        <p className="mt-2 text-gray-600">
+      <div className="rounded-sm border border-slate-200 bg-white p-8 shadow-sm">
+        <h1 className="text-2xl font-bold text-blue-900 font-serif">Créer mon dossier Learning Agreement</h1>
+        <p className="mt-2 text-slate-600">
           Année scolaire {currentYear?.year || 'Non définie'}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {error && (
-            <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600">
+            <div className="rounded-sm bg-red-50 p-4 text-sm text-red-600">
               {error}
             </div>
           )}

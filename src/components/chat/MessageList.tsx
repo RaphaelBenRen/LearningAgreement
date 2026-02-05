@@ -36,11 +36,10 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
             className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[80%] rounded-lg px-4 py-3 ${
-                isOwn
+              className={`max-w-[80%] rounded-sm px-4 py-3 ${isOwn
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-900'
-              }`}
+                }`}
             >
               {!isOwn && (
                 <p className="mb-1 text-xs font-medium text-gray-600">
@@ -49,9 +48,8 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
               )}
               <p className="whitespace-pre-wrap text-sm">{message.content}</p>
               <p
-                className={`mt-1 text-xs ${
-                  isOwn ? 'text-blue-200' : 'text-gray-400'
-                }`}
+                className={`mt-1 text-xs ${isOwn ? 'text-blue-200' : 'text-gray-400'
+                  }`}
               >
                 {formatDateTime(message.created_at)}
               </p>

@@ -47,45 +47,61 @@ export function AuthenticatedLayout({ children, user }: AuthenticatedLayoutProps
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="border-b bg-white">
+      <header className="bg-slate-50 border-b-0 border-transparent pt-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-8">
-              <Link href={getDashboardLink()} className="text-xl font-bold text-blue-900">
-                Learning Agreement
+              <Link href={getDashboardLink()} className="text-xl font-bold text-blue-900 flex items-center gap-2">
+                <div className="h-8 w-8 bg-blue-900 rounded-sm flex items-center justify-center text-white font-bold text-lg">LA</div>
+                <span className="font-serif">Learning Agreement</span>
               </Link>
 
-              {/* Navigation principale */}
-              <nav className="hidden md:flex items-center gap-6">
+              {/* Separator */}
+              <div className="hidden md:block h-8 w-px bg-blue-100" />
+
+              {/* Page Title & Subtitle in Header */}
+              <div className="hidden md:flex flex-col justify-center">
+                <h1 className="text-lg font-serif font-bold text-blue-900 leading-tight">
+                  {user.role === 'international' ? 'Service International' :
+                    user.role === 'major_head' ? 'Espace Responsable' :
+                      'Mon Learning Agreement'}
+                </h1>
+                <p className="text-xs text-blue-700">
+                  {user.role === 'international' ? (pathname.includes('/application/') ? 'Détail du dossier' : 'Vue globale de tous les Learning Agreements') :
+                    user.role === 'major_head' ? 'Gestion des étudiants' :
+                      'Espace Étudiant'}
+                </p>
+              </div>
+            </div>
+
+            {/* Right Side: Notification Bell + User Menu */}
+            <div className="flex items-center gap-4">
+              <nav className="hidden md:flex items-center gap-6 mr-4">
                 <Link
                   href={getDashboardLink()}
-                  className={`text-sm font-medium ${pathname === getDashboardLink()
-                      ? 'text-blue-600'
-                      : 'text-gray-600 hover:text-gray-900'
+                  className={`text-sm font-medium transition-colors font-serif ${pathname === getDashboardLink()
+                    ? 'text-blue-900 font-bold'
+                    : 'text-slate-400 hover:text-blue-900'
                     }`}
                 >
                   Tableau de bord
                 </Link>
               </nav>
-            </div>
-
-            {/* Right Side: Notification Bell + User Menu */}
-            <div className="flex items-center gap-4">
               <NotificationBell />
 
               {/* User menu */}
               <div className="relative">
                 <button
                   onClick={() => setMenuOpen(!menuOpen)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-gray-100"
+                  className="flex items-center gap-3 rounded-sm px-3 py-2 hover:bg-slate-50 transition-colors"
                 >
                   <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
-                    <p className="text-xs text-gray-500">{getRoleLabel(user.role)}</p>
+                    <p className="text-sm font-medium text-blue-900">{user.full_name}</p>
+                    <p className="text-xs text-blue-700">{getRoleLabel(user.role)}</p>
                   </div>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-white text-blue-900 font-semibold border border-blue-100">
                     {user.full_name.charAt(0).toUpperCase()}
                   </div>
                 </button>
@@ -96,10 +112,10 @@ export function AuthenticatedLayout({ children, user }: AuthenticatedLayoutProps
                       className="fixed inset-0 z-10"
                       onClick={() => setMenuOpen(false)}
                     />
-                    <div className="absolute right-0 z-20 mt-2 w-48 rounded-lg border bg-white py-1 shadow-lg">
-                      <div className="px-4 py-2 border-b sm:hidden">
-                        <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
-                        <p className="text-xs text-gray-500">{getRoleLabel(user.role)}</p>
+                    <div className="absolute right-0 z-20 mt-2 w-48 rounded-sm border border-slate-200 bg-white py-1 shadow-md">
+                      <div className="px-4 py-2 border-b border-slate-100 sm:hidden">
+                        <p className="text-sm font-medium text-slate-900">{user.full_name}</p>
+                        <p className="text-xs text-slate-500">{getRoleLabel(user.role)}</p>
                       </div>
                       <button
                         onClick={handleLogout}
@@ -120,7 +136,7 @@ export function AuthenticatedLayout({ children, user }: AuthenticatedLayoutProps
       </header>
 
       {/* Main content */}
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {children}
       </main>
     </div>

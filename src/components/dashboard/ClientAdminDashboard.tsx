@@ -78,72 +78,71 @@ export function ClientAdminDashboard({ applications }: ClientAdminDashboardProps
 
     return (
         <div className="space-y-8">
-            {/* Header */}
-            <div>
-                <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-                <p className="mt-1 text-gray-600">Gestion des Learning Agreements de vos étudiants</p>
-            </div>
+            {/* Header supprimé car déplacé dans le layout */}
+            <div className="pt-2"></div>
 
-            {/* Stats */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-xl border bg-white p-6">
-                    <p className="text-sm text-gray-500">En attente</p>
-                    <p className="mt-1 text-3xl font-bold text-blue-600">{pendingCount}</p>
+            {/* Statistiques rapides */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm text-slate-500">En attente</p>
+                    <p className="mt-1 text-3xl font-bold text-blue-900">{pendingCount}</p>
                 </div>
-                <div className="rounded-xl border bg-white p-6">
-                    <p className="text-sm text-gray-500">En révision</p>
-                    <p className="mt-1 text-3xl font-bold text-yellow-600">{revisionCount}</p>
+                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm text-slate-500">En révision</p>
+                    <p className="mt-1 text-3xl font-bold text-amber-600">{revisionCount}</p>
                 </div>
-                <div className="rounded-xl border bg-white p-6">
-                    <p className="text-sm text-gray-500">Validés</p>
-                    <p className="mt-1 text-3xl font-bold text-green-600">{validatedCount}</p>
+                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm text-slate-500">Validés</p>
+                    <p className="mt-1 text-3xl font-bold text-indigo-900">{validatedCount}</p>
                 </div>
-                <div className="rounded-xl border bg-white p-6">
-                    <p className="text-sm text-gray-500">Total</p>
-                    <p className="mt-1 text-3xl font-bold text-gray-900">{applications.length}</p>
+                <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm text-slate-500">Total</p>
+                    <p className="mt-1 text-3xl font-bold text-slate-900">{applications.length}</p>
                 </div>
             </div>
 
             {/* Dossiers en attente d'action (Permanent Display for easy access) */}
-            {pendingApplications.length > 0 && (
-                <div>
-                    <h2 className="mb-4 text-lg font-semibold text-gray-900">
-                        En attente de validation ({pendingApplications.length})
-                    </h2>
-                    <div className="space-y-4">
-                        {pendingApplications.map((app) => (
-                            <Link
-                                key={app.id}
-                                href={`/admin/application/${app.id}`}
-                                className="block rounded-xl border bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
-                            >
-                                <div className="flex items-start justify-between">
-                                    <div>
-                                        <p className="font-semibold text-gray-900">
-                                            {app.student?.full_name}
-                                        </p>
-                                        <p className="text-sm text-gray-600">
-                                            {app.university_name} - {app.university_city}, {app.university_country}
-                                        </p>
+            {
+                pendingApplications.length > 0 && (
+                    <div>
+                        <h2 className="mb-4 text-lg font-semibold text-blue-900 font-serif">
+                            En attente de validation ({pendingApplications.length})
+                        </h2>
+                        <div className="space-y-4">
+                            {pendingApplications.map((app) => (
+                                <Link
+                                    key={app.id}
+                                    href={`/admin/application/${app.id}`}
+                                    className="block rounded-sm border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+                                >
+                                    <div className="flex items-start justify-between">
+                                        <div>
+                                            <p className="font-semibold text-blue-900">
+                                                {app.student?.full_name}
+                                            </p>
+                                            <p className="text-sm text-slate-600">
+                                                {app.university_name} - {app.university_city}, {app.university_country}
+                                            </p>
+                                        </div>
+                                        <StatusBadge status={app.status} />
                                     </div>
-                                    <StatusBadge status={app.status} />
-                                </div>
-                                <div className="mt-4 flex items-center gap-2 text-sm text-blue-600">
-                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                    </svg>
-                                    Examiner le dossier
-                                </div>
-                            </Link>
-                        ))}
+                                    <div className="mt-4 flex items-center gap-2 text-sm text-blue-900 font-medium">
+                                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                        </svg>
+                                        Examiner le dossier
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Tous les dossiers (Searchable) */}
             <div>
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <h2 className="text-lg font-semibold text-gray-900">Tous les dossiers</h2>
+                    <h2 className="text-lg font-semibold text-blue-900 font-serif">Tous les dossiers</h2>
                 </div>
 
                 <DashboardFilterBar
@@ -168,12 +167,12 @@ export function ClientAdminDashboard({ applications }: ClientAdminDashboardProps
                             ))}
                         </div>
                     ) : (
-                        <div className="rounded-xl border-2 border-dashed border-gray-300 p-12 text-center mt-6">
-                            <p className="text-gray-500">Aucun dossier trouvé pour ces critères</p>
+                        <div className="rounded-sm border-2 border-dashed border-slate-300 p-12 text-center mt-6">
+                            <p className="text-slate-500">Aucun dossier trouvé pour ces critères</p>
                         </div>
                     )}
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }

@@ -89,7 +89,7 @@ export function CourseCard({
   }
 
   return (
-    <div className="rounded-lg border bg-white">
+    <div className="rounded-sm border border-slate-200 bg-white">
       <div
         className="flex cursor-pointer items-center justify-between p-4"
         onClick={() => setExpanded(!expanded)}
