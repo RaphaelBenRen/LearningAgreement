@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -16,6 +16,43 @@ export function AuthenticatedLayout({ children, user }: AuthenticatedLayoutProps
   const router = useRouter()
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  // Pour les étudiants : récupérer l'ID de l'application courante pour le lien "Infos destination"
+  const [studentAppId, setStudentAppId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (user.role !== 'student') return
+
+    // Essayer d'extraire l'ID depuis l'URL d'abord
+    const match = pathname.match(/\/application\/([^/]+)/)
+    if (match) {
+      setStudentAppId(match[1])
+      return
+    }
+
+    // Sinon récupérer l'application de l'année courante
+    const fetchApp = async () => {
+      const supabase = createClient()
+      const { data: year } = await supabase
+        .from('academic_years')
+        .select('id')
+        .eq('is_current', true)
+        .single()
+
+      if (!year) return
+
+      const { data: app } = await supabase
+        .from('applications')
+        .select('id')
+        .eq('student_id', user.id)
+        .eq('academic_year_id', year.id)
+        .single()
+
+      if (app) setStudentAppId(app.id)
+    }
+
+    fetchApp()
+  }, [user.role, user.id, pathname])
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -88,6 +125,17 @@ export function AuthenticatedLayout({ children, user }: AuthenticatedLayoutProps
                 >
                   Tableau de bord
                 </Link>
+                {user.role === 'student' && studentAppId && (
+                  <Link
+                    href={`/application/${studentAppId}/university`}
+                    className={`text-sm font-medium transition-colors font-serif ${pathname.endsWith('/university')
+                      ? 'text-blue-900 font-bold'
+                      : 'text-slate-400 hover:text-blue-900'
+                      }`}
+                  >
+                    Infos destination
+                  </Link>
+                )}
                 {user.role === 'international' && (
                   <Link
                     href="/international/stats"

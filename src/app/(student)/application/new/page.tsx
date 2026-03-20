@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
-import type { Profile, AcademicYear } from '@/types/database'
+import { UniversitySelect } from '@/components/ui/UniversitySelect'
+import type { Profile, AcademicYear, University } from '@/types/database'
 
 export default function NewApplicationPage() {
   const router = useRouter()
@@ -16,11 +16,9 @@ export default function NewApplicationPage() {
   const [majorHeads, setMajorHeads] = useState<Profile[]>([])
   const [currentYear, setCurrentYear] = useState<AcademicYear | null>(null)
 
+  const [selectedUniversity, setSelectedUniversity] = useState<University | null>(null)
   const [formData, setFormData] = useState({
     majorHeadId: '',
-    universityName: '',
-    universityCity: '',
-    universityCountry: '',
   })
 
   useEffect(() => {
@@ -92,7 +90,7 @@ export default function NewApplicationPage() {
     setError(null)
     setLoading(true)
 
-    if (!formData.majorHeadId || !formData.universityName || !formData.universityCity || !formData.universityCountry) {
+    if (!formData.majorHeadId || !selectedUniversity) {
       setError('Veuillez remplir tous les champs')
       setLoading(false)
       return
@@ -105,7 +103,7 @@ export default function NewApplicationPage() {
     }
 
     const selectedHead = majorHeads.find(h => h.id === formData.majorHeadId)
-    const confirmMessage = `Veuillez vérifier les informations :\n\n- Responsable : ${selectedHead?.full_name}\n- Université : ${formData.universityName}\n- Ville : ${formData.universityCity}\n- Pays : ${formData.universityCountry}\n\nConfirmez-vous la création de ce dossier ?`
+    const confirmMessage = `Veuillez vérifier les informations :\n\n- Responsable : ${selectedHead?.full_name}\n- Université : ${selectedUniversity.name}\n- Ville : ${selectedUniversity.city}\n- Pays : ${selectedUniversity.country}\n\nConfirmez-vous la création de ce dossier ?`
 
     if (!confirm(confirmMessage)) {
       setLoading(false)
@@ -126,9 +124,10 @@ export default function NewApplicationPage() {
         student_id: user.id,
         major_head_id: formData.majorHeadId,
         academic_year_id: currentYear.id,
-        university_name: formData.universityName,
-        university_city: formData.universityCity,
-        university_country: formData.universityCountry,
+        university_id: selectedUniversity.id,
+        university_name: selectedUniversity.name,
+        university_city: selectedUniversity.city,
+        university_country: selectedUniversity.country,
         status: 'draft',
       })
       .select()
@@ -190,36 +189,11 @@ export default function NewApplicationPage() {
           <div className="border-t pt-6">
             <h2 className="mb-4 font-semibold text-gray-900">Université d&apos;accueil</h2>
 
-            <div className="space-y-4">
-              <Input
-                id="universityName"
-                label="Nom de l'université"
-                value={formData.universityName}
-                onChange={(e) => setFormData({ ...formData, universityName: e.target.value })}
-                placeholder="Ex: Technical University of Munich"
-                required
-              />
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Input
-                  id="universityCity"
-                  label="Ville"
-                  value={formData.universityCity}
-                  onChange={(e) => setFormData({ ...formData, universityCity: e.target.value })}
-                  placeholder="Ex: Munich"
-                  required
-                />
-
-                <Input
-                  id="universityCountry"
-                  label="Pays"
-                  value={formData.universityCountry}
-                  onChange={(e) => setFormData({ ...formData, universityCountry: e.target.value })}
-                  placeholder="Ex: Allemagne"
-                  required
-                />
-              </div>
-            </div>
+            <UniversitySelect
+              value={selectedUniversity}
+              onChange={setSelectedUniversity}
+              required
+            />
           </div>
 
           <div className="flex gap-4 pt-4">

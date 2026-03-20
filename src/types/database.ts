@@ -73,6 +73,59 @@ export interface Database {
           is_current?: boolean
         }
       }
+      universities: {
+        Row: {
+          id: string
+          name: string
+          city: string
+          country: string
+          region: string
+          teaching_language: string | null
+          semester_dates: string | null
+          housing_info: string | null
+          monthly_budget: string | null
+          visa_info: string | null
+          health_info: string | null
+          erasmus_plus: boolean | null
+          supplement_fee: string | null
+          additional_notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          city: string
+          country: string
+          region?: string
+          teaching_language?: string | null
+          semester_dates?: string | null
+          housing_info?: string | null
+          monthly_budget?: string | null
+          visa_info?: string | null
+          health_info?: string | null
+          erasmus_plus?: boolean | null
+          supplement_fee?: string | null
+          additional_notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          city?: string
+          country?: string
+          region?: string
+          teaching_language?: string | null
+          semester_dates?: string | null
+          housing_info?: string | null
+          monthly_budget?: string | null
+          visa_info?: string | null
+          health_info?: string | null
+          erasmus_plus?: boolean | null
+          supplement_fee?: string | null
+          additional_notes?: string | null
+          created_at?: string
+        }
+      }
       applications: {
         Row: {
           id: string
@@ -80,6 +133,7 @@ export interface Database {
           major_head_id: string
           academic_year_id: string
           status: ApplicationStatus
+          university_id: string | null
           university_name: string
           university_city: string
           university_country: string
@@ -92,6 +146,7 @@ export interface Database {
           major_head_id: string
           academic_year_id: string
           status?: ApplicationStatus
+          university_id: string
           university_name: string
           university_city: string
           university_country: string
@@ -104,6 +159,7 @@ export interface Database {
           major_head_id?: string
           academic_year_id?: string
           status?: ApplicationStatus
+          university_id?: string
           university_name?: string
           university_city?: string
           university_country?: string
@@ -271,12 +327,14 @@ export type Application = Database['public']['Tables']['applications']['Row']
 export type Course = Database['public']['Tables']['courses']['Row']
 export type Message = Database['public']['Tables']['messages']['Row']
 export type File = Database['public']['Tables']['files']['Row']
+export type University = Database['public']['Tables']['universities']['Row']
 
 // Types avec relations
 export type ApplicationWithRelations = Application & {
   student: Profile
   major_head: Profile
   academic_year: AcademicYear
+  university?: University | null
   courses: Course[]
   messages: (Message & { sender: Profile })[]
   files: File[]

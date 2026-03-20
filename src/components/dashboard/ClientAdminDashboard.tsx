@@ -5,12 +5,13 @@ import Link from 'next/link'
 import { ApplicationCard } from '@/components/dashboard/ApplicationCard'
 import { StatusBadge } from '@/components/dashboard/StatusBadge'
 import { DashboardFilterBar } from '@/components/dashboard/DashboardFilterBar'
-import type { Application, ApplicationStatus, Profile, AcademicYear } from '@/types/database'
+import type { Application, ApplicationStatus, Profile, AcademicYear, University } from '@/types/database'
 import { NotificationBell } from '@/components/ui/NotificationBell'
 
 type ApplicationWithRelations = Application & {
     student: Profile
     academic_year: AcademicYear
+    university?: University | null
 }
 
 interface ClientAdminDashboardProps {
@@ -44,8 +45,8 @@ export function ClientAdminDashboard({ applications }: ClientAdminDashboardProps
                 // Search Filter
                 const searchLower = searchTerm.toLowerCase()
                 const studentName = app.student?.full_name?.toLowerCase() || ''
-                const city = app.university_city?.toLowerCase() || ''
-                const uni = app.university_name?.toLowerCase() || ''
+                const city = (app.university?.city || app.university_city || '').toLowerCase()
+                const uni = (app.university?.name || app.university_name || '').toLowerCase()
 
                 return (
                     studentName.includes(searchLower) ||
@@ -121,7 +122,7 @@ export function ClientAdminDashboard({ applications }: ClientAdminDashboardProps
                                                 {app.student?.full_name}
                                             </p>
                                             <p className="text-sm text-slate-600">
-                                                {app.university_name} - {app.university_city}, {app.university_country}
+                                                {app.university?.name || app.university_name} - {app.university?.city || app.university_city}, {app.university?.country || app.university_country}
                                             </p>
                                         </div>
                                         <StatusBadge status={app.status} />

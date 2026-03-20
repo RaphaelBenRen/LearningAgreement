@@ -28,7 +28,7 @@ export default async function StudentDashboard() {
   // Récupérer les applications de l'étudiant
   const { data: applications } = await supabase
     .from('applications')
-    .select('*, academic_year:academic_years(*)')
+    .select('*, academic_year:academic_years(*), university:universities(*)')
     .eq('student_id', user.id)
     .order('created_at', { ascending: false })
 
@@ -65,10 +65,10 @@ export default async function StudentDashboard() {
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-lg font-semibold text-blue-900 font-serif">
-                {currentApplication.university_name}
+                {currentApplication.university?.name || currentApplication.university_name}
               </h2>
               <p className="text-slate-600">
-                {currentApplication.university_city}, {currentApplication.university_country}
+                {currentApplication.university?.city || currentApplication.university_city}, {currentApplication.university?.country || currentApplication.university_country}
               </p>
             </div>
             <Link

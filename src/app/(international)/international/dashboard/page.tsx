@@ -23,7 +23,8 @@ export default async function InternationalDashboard() {
       *,
       student:profiles!applications_student_id_fkey(*),
       major_head:profiles!applications_major_head_id_fkey(*),
-      academic_year:academic_years(*)
+      academic_year:academic_years(*),
+      university:universities(*)
     `)
     .order('updated_at', { ascending: false })
 

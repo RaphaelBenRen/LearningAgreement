@@ -5,13 +5,14 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { StatusBadge } from '@/components/dashboard/StatusBadge'
 import { DashboardFilterBar } from '@/components/dashboard/DashboardFilterBar'
-import type { Application, ApplicationStatus, Profile, AcademicYear, Major } from '@/types/database'
+import type { Application, ApplicationStatus, Profile, AcademicYear, Major, University } from '@/types/database'
 import { NotificationBell } from '@/components/ui/NotificationBell'
 
 type ApplicationWithRelations = Application & {
     student: Profile
     major_head: Profile
     academic_year: AcademicYear
+    university?: University | null
 }
 
 interface ClientInternationalDashboardProps {
@@ -58,8 +59,8 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                 // Search Filter
                 const searchLower = searchTerm.toLowerCase()
                 const studentName = app.student?.full_name?.toLowerCase() || ''
-                const city = app.university_city?.toLowerCase() || ''
-                const uni = app.university_name?.toLowerCase() || ''
+                const city = (app.university?.city || app.university_city || '').toLowerCase()
+                const uni = (app.university?.name || app.university_name || '').toLowerCase()
                 const majorHead = app.major_head?.full_name?.toLowerCase() || ''
 
                 return (
@@ -134,7 +135,7 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                                             {app.student?.full_name}
                                         </p>
                                         <p className="text-sm text-slate-600">
-                                            {app.university_name} - {app.university_city}, {app.university_country}
+                                            {app.university?.name || app.university_name} - {app.university?.city || app.university_city}, {app.university?.country || app.university_country}
                                         </p>
                                         <p className="mt-1 text-xs text-slate-500">
                                             Responsable : {app.major_head?.full_name}
@@ -229,9 +230,9 @@ export function ClientInternationalDashboard({ applications, majors }: ClientInt
                                                     </p>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <p className="text-sm text-gray-900">{app.university_name}</p>
+                                                    <p className="text-sm text-gray-900">{app.university?.name || app.university_name}</p>
                                                     <p className="text-xs text-gray-500">
-                                                        {app.university_city}, {app.university_country}
+                                                        {app.university?.city || app.university_city}, {app.university?.country || app.university_country}
                                                     </p>
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-600">

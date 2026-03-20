@@ -12,7 +12,9 @@ import { MessageList } from '@/components/chat/MessageList'
 import { MessageInput } from '@/components/chat/MessageInput'
 import { FileList, FileUpload } from '@/components/chat/FileUpload'
 import { REQUIRED_ECTS } from '@/lib/utils/constants'
-import type { Application, Course, Message, Profile, File as FileType } from '@/types/database'
+import type { Application, Course, Message, Profile, File as FileType, University } from '@/types/database'
+
+type ApplicationWithUniversity = Application & { university?: University | null }
 
 type MessageWithSender = Message & { sender: Profile }
 
@@ -22,7 +24,7 @@ export default function InternationalApplicationDetailPage() {
   const applicationId = params.id as string
 
   const [loading, setLoading] = useState(true)
-  const [application, setApplication] = useState<Application | null>(null)
+  const [application, setApplication] = useState<ApplicationWithUniversity | null>(null)
   const [student, setStudent] = useState<Profile | null>(null)
   const [majorHead, setMajorHead] = useState<Profile | null>(null)
   const [courses, setCourses] = useState<Course[]>([])
@@ -59,7 +61,7 @@ export default function InternationalApplicationDetailPage() {
       // Application
       const { data: app } = await supabase
         .from('applications')
-        .select('*')
+        .select('*, university:universities(*)')
         .eq('id', applicationId)
         .single()
 
@@ -268,8 +270,8 @@ export default function InternationalApplicationDetailPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-sm border border-slate-200 bg-white p-6">
           <h2 className="font-semibold text-blue-900">Université d&apos;accueil</h2>
-          <p className="mt-1 text-slate-900">{application.university_name}</p>
-          <p className="text-slate-600">{application.university_city}, {application.university_country}</p>
+          <p className="mt-1 text-slate-900">{application.university?.name || application.university_name}</p>
+          <p className="text-slate-600">{application.university?.city || application.university_city}, {application.university?.country || application.university_country}</p>
         </div>
         <div className="rounded-sm border border-slate-200 bg-white p-6">
           <h2 className="font-semibold text-blue-900">Responsable de majeure</h2>

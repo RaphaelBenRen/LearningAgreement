@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { Application, Profile, AcademicYear } from '@/types/database'
+import type { Application, Profile, AcademicYear, University } from '@/types/database'
 import { StatusBadge } from './StatusBadge'
 import { formatDate } from '@/lib/utils/validators'
 
@@ -7,6 +7,7 @@ interface ApplicationCardProps {
   application: Application & {
     student?: Profile
     academic_year?: AcademicYear
+    university?: University | null
   }
   href: string
   showStudent?: boolean
@@ -24,10 +25,10 @@ export function ApplicationCard({ application, href, showStudent = false }: Appl
             <p className="font-semibold text-blue-900">{application.student.full_name}</p>
           )}
           <p className={`${showStudent ? 'text-sm text-slate-600' : 'font-semibold text-blue-900'}`}>
-            {application.university_name}
+            {application.university?.name || application.university_name}
           </p>
           <p className="text-sm text-gray-500">
-            {application.university_city}, {application.university_country}
+            {application.university?.city || application.university_city}, {application.university?.country || application.university_country}
           </p>
         </div>
         <StatusBadge status={application.status} />

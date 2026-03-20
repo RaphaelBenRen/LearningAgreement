@@ -11,7 +11,9 @@ import { StatusBadge } from '@/components/dashboard/StatusBadge'
 import { MessageList } from '@/components/chat/MessageList'
 import { MessageInput } from '@/components/chat/MessageInput'
 import { formatFileSize } from '@/lib/utils/validators'
-import type { Application, Message, Profile, File as FileType } from '@/types/database'
+import type { Application, Message, Profile, File as FileType, University } from '@/types/database'
+
+type ApplicationWithUniversity = Application & { university?: University | null }
 
 type MessageWithSender = Message & { sender: Profile }
 
@@ -22,7 +24,7 @@ export default function ApplicationDetailPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [loading, setLoading] = useState(true)
-  const [application, setApplication] = useState<Application | null>(null)
+  const [application, setApplication] = useState<ApplicationWithUniversity | null>(null)
   const [messages, setMessages] = useState<MessageWithSender[]>([])
   const [files, setFiles] = useState<FileType[]>([])
   const [majorHead, setMajorHead] = useState<Profile | null>(null)
@@ -50,7 +52,7 @@ export default function ApplicationDetailPage() {
 
       const { data: app } = await supabase
         .from('applications')
-        .select('*')
+        .select('*, university:universities(*)')
         .eq('id', applicationId)
         .single()
 
@@ -236,8 +238,8 @@ export default function ApplicationDetailPage() {
             </svg>
             Retour
           </Link>
-          <h1 className="mt-2 text-2xl font-bold text-blue-900 font-serif">{application.university_name}</h1>
-          <p className="text-slate-600">{application.university_city}, {application.university_country}</p>
+          <h1 className="mt-2 text-2xl font-bold text-blue-900 font-serif">{application.university?.name || application.university_name}</h1>
+          <p className="text-slate-600">{application.university?.city || application.university_city}, {application.university?.country || application.university_country}</p>
         </div>
         <StatusBadge status={application.status} />
       </div>

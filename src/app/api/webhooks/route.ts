@@ -20,7 +20,8 @@ export async function POST(request: Request) {
       .select(`
         *,
         student:profiles!applications_student_id_fkey(*),
-        major_head:profiles!applications_major_head_id_fkey(*)
+        major_head:profiles!applications_major_head_id_fkey(*),
+        university:universities(*)
       `)
       .eq('id', application_id)
       .single()
@@ -43,9 +44,9 @@ export async function POST(request: Request) {
         application_id,
         status: application.status,
         university: {
-          name: application.university_name,
-          city: application.university_city,
-          country: application.university_country,
+          name: application.university?.name || application.university_name,
+          city: application.university?.city || application.university_city,
+          country: application.university?.country || application.university_country,
         },
         student: {
           name: (application.student as { full_name: string })?.full_name,

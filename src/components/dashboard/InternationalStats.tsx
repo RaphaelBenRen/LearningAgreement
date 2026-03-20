@@ -14,11 +14,12 @@ import {
     Cell,
     ResponsiveContainer,
 } from 'recharts'
-import type { Application, Profile, Major } from '@/types/database'
+import type { Application, Profile, Major, University } from '@/types/database'
 
 type ApplicationWithRelations = Application & {
     student: Profile
     major_head: Profile
+    university?: University | null
 }
 
 interface InternationalStatsProps {
@@ -100,7 +101,7 @@ export function InternationalStats({ applications, majors }: InternationalStatsP
     const universityData = useMemo(() => {
         const counts: Record<string, number> = {}
         applications.forEach(app => {
-            const uni = app.university_name || 'Inconnue'
+            const uni = app.university?.name || app.university_name || 'Inconnue'
             counts[uni] = (counts[uni] || 0) + 1
         })
 

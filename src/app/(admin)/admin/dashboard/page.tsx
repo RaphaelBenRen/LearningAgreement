@@ -21,7 +21,8 @@ export default async function AdminDashboard() {
     .select(`
       *,
       student:profiles!applications_student_id_fkey(*),
-      academic_year:academic_years(*)
+      academic_year:academic_years(*),
+      university:universities(*)
     `)
     .eq('major_head_id', user.id)
     .order('updated_at', { ascending: false })
