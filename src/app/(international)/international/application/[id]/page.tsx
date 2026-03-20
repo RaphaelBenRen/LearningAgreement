@@ -107,6 +107,8 @@ export default function InternationalApplicationDetailPage() {
     fetchData()
   }, [applicationId, router])
 
+  const internationalFiles = files.filter(f => f.uploader_id !== application?.student_id && f.uploader_id !== application?.major_head_id)
+  const hasUploadedSignedLA = internationalFiles.length > 0
   const canValidateFinal = application?.status === 'validated_major'
 
   const handleFinalValidation = async () => {
@@ -286,11 +288,23 @@ export default function InternationalApplicationDetailPage() {
             Ce dossier a été validé par le responsable de majeure. Vous pouvez maintenant donner la validation finale.
           </p>
 
+          {!hasUploadedSignedLA && (
+            <div className="flex items-center gap-2 rounded-sm border border-amber-300 bg-amber-50 p-3">
+              <svg className="h-5 w-5 flex-shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+              <p className="text-sm text-amber-800">
+                Vous devez d&apos;abord uploader le Learning Agreement signé ci-dessous avant de pouvoir valider.
+              </p>
+            </div>
+          )}
+
           <div className="flex gap-4">
             <Button
               onClick={handleFinalValidation}
-              disabled={validating}
+              disabled={validating || !hasUploadedSignedLA}
               className="rounded-sm"
+              title={!hasUploadedSignedLA ? 'Veuillez uploader le Learning Agreement signé avant de valider' : ''}
             >
               {validating ? 'Validation...' : 'Valider définitivement'}
             </Button>
@@ -364,7 +378,7 @@ export default function InternationalApplicationDetailPage() {
         {/* Fichiers Étudiant */}
         <div className="rounded-sm border border-slate-200 bg-white p-6">
           <h2 className="font-semibold text-blue-900 mb-4">Documents Étudiant</h2>
-          <FileList files={files.filter(f => f.uploader_id === application.student_id)} />
+          <FileList files={files.filter(f => f.uploader_id === application.student_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
           {files.filter(f => f.uploader_id === application.student_id).length === 0 && (
             <p className="text-slate-500 text-sm">Aucun document.</p>
           )}
@@ -373,7 +387,7 @@ export default function InternationalApplicationDetailPage() {
         {/* Fichiers Responsable */}
         <div className="rounded-sm border border-slate-200 bg-white p-6">
           <h2 className="font-semibold text-blue-900 mb-4">Documents Responsable Majeure</h2>
-          <FileList files={files.filter(f => f.uploader_id === application.major_head_id)} />
+          <FileList files={files.filter(f => f.uploader_id === application.major_head_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
           {files.filter(f => f.uploader_id === application.major_head_id).length === 0 && (
             <p className="text-slate-500 text-sm">Aucun document.</p>
           )}
@@ -382,7 +396,7 @@ export default function InternationalApplicationDetailPage() {
         {/* Fichiers International */}
         <div className="rounded-sm border border-slate-200 bg-white p-6">
           <h2 className="font-semibold text-blue-900 mb-4">Learning Agreement Signé par service Inter</h2>
-          <FileList files={files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id)} />
+          <FileList files={files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
           <div className="mt-4">
             <FileUpload
               applicationId={applicationId}

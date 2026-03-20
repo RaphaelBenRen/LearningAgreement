@@ -300,7 +300,7 @@ export default function AdminApplicationDetailPage() {
         {/* Fichiers Étudiant */}
         <div className="rounded-sm border border-slate-200 bg-white p-6">
           <h2 className="font-semibold text-blue-900 font-serif mb-4">Documents Étudiant</h2>
-          <FileList files={files.filter(f => f.uploader_id === application.student_id)} />
+          <FileList files={files.filter(f => f.uploader_id === application.student_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
           {files.filter(f => f.uploader_id === application.student_id).length === 0 && (
             <p className="text-gray-500 text-sm">Aucun document.</p>
           )}
@@ -309,7 +309,7 @@ export default function AdminApplicationDetailPage() {
         {/* Fichiers Responsable */}
         <div className="rounded-sm border border-slate-200 bg-white p-6">
           <h2 className="font-semibold text-blue-900 font-serif mb-4">Documents Responsable Majeure</h2>
-          <FileList files={files.filter(f => f.uploader_id === application.major_head_id)} />
+          <FileList files={files.filter(f => f.uploader_id === application.major_head_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
           <div className="mt-4">
             <FileUpload
               applicationId={applicationId}
@@ -321,7 +321,7 @@ export default function AdminApplicationDetailPage() {
         {/* Fichiers International */}
         <div className="rounded-sm border border-slate-200 bg-white p-6">
           <h2 className="font-semibold text-blue-900 font-serif mb-4">Learning Agreement Signé par service Inter</h2>
-          <FileList files={files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id)} />
+          <FileList files={files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
           {files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id).length === 0 && (
             <p className="text-gray-500 text-sm">Aucun document.</p>
           )}
