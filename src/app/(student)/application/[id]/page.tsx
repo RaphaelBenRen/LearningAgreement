@@ -22,6 +22,7 @@ export default function ApplicationDetailPage() {
   const router = useRouter()
   const applicationId = params.id as string
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const modifFileInputRef = useRef<HTMLInputElement>(null)
 
   const [loading, setLoading] = useState(true)
   const [application, setApplication] = useState<ApplicationWithUniversity | null>(null)
@@ -36,6 +37,8 @@ export default function ApplicationDetailPage() {
   const [modificationReason, setModificationReason] = useState('')
   const [modificationCustomReason, setModificationCustomReason] = useState('')
   const [requestingModification, setRequestingModification] = useState(false)
+  const [uploadingModif, setUploadingModif] = useState(false)
+  const [uploadModifError, setUploadModifError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -266,6 +269,95 @@ export default function ApplicationDetailPage() {
     }
 
     setRequestingModification(false)
+  }
+
+  const handleModifFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.type !== 'application/pdf') {
+      setUploadModifError('Seuls les fichiers PDF sont acceptés')
+      return
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadModifError('Le fichier ne doit pas dépasser 10 Mo')
+      return
+    }
+
+    setUploadingModif(true)
+    setUploadModifError(null)
+
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const fileName = `${applicationId}/${Date.now()}_MODIF_${file.name}`
+    const { error: uploadErr } = await supabase.storage
+      .from('learning-agreements')
+      .upload(fileName, file)
+
+    if (uploadErr) {
+      setUploadModifError('Erreur lors de l\'upload')
+      setUploadingModif(false)
+      return
+    }
+
+    const { data, error: insertErr } = await supabase
+      .from('files')
+      .insert({
+        application_id: applicationId,
+        uploader_id: user.id,
+        file_name: `[MODIFIÉ] ${file.name}`,
+        file_path: fileName,
+        file_size: file.size,
+      })
+      .select()
+      .single()
+
+    if (!insertErr && data) {
+      setFiles((prev) => [data, ...prev])
+    }
+
+    setUploadingModif(false)
+    if (modifFileInputRef.current) {
+      modifFileInputRef.current.value = ''
+    }
+  }
+
+  const modifiedFiles = files.filter(f => f.uploader_id === currentUser?.id && f.file_name.startsWith('[MODIFIÉ]'))
+
+  const handleSubmitModification = async () => {
+    if (submitting || modifiedFiles.length === 0) return
+
+    if (!confirm('Êtes-vous sûr de vouloir soumettre votre Learning Agreement modifié ?\n\nIl sera envoyé pour re-validation par votre responsable de majeure.')) {
+      return
+    }
+
+    setSubmitting(true)
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('applications')
+      .update({ status: 'submitted' })
+      .eq('id', applicationId)
+
+    if (!error) {
+      setApplication((prev) => prev ? { ...prev, status: 'submitted' } : null)
+      toast.success('Learning Agreement modifié soumis pour re-validation !')
+
+      if (application?.major_head_id) {
+        await supabase.from('notifications').insert({
+          user_id: application.major_head_id,
+          application_id: applicationId,
+          message: `${currentUser?.full_name} a soumis un Learning Agreement modifié pour re-validation`,
+          link: `/admin/application/${applicationId}`
+        })
+      }
+    } else {
+      toast.error(`Erreur: ${error.message}`)
+    }
+
+    setSubmitting(false)
   }
 
   const handleDeleteFile = async (file: FileType) => {
@@ -612,20 +704,100 @@ export default function ApplicationDetailPage() {
       )}
 
       {application.status === 'modification_requested' && (
-        <div className="rounded-sm border border-orange-200 bg-orange-50 p-6">
-          <h2 className="font-semibold text-orange-900">Modification du Learning Agreement en cours</h2>
-          <p className="mt-1 text-sm text-orange-700">
-            Vous avez demandé une modification de votre Learning Agreement. Veuillez uploader votre nouveau Learning Agreement modifié puis le soumettre pour re-validation.
-          </p>
-          <div className="mt-4 text-sm text-orange-800">
-            <p className="font-medium">Rappel pour la modification :</p>
-            <ul className="list-disc pl-5 mt-2 space-y-1">
-              <li>Précisez les cours supprimés et ceux de remplacement</li>
-              <li>Mettez à jour sur Mobility Online</li>
-              <li>Remplissez la page 2 du LA &quot;Modification du programme d&apos;études&quot;</li>
-            </ul>
+        <>
+          <div className="rounded-sm border border-orange-200 bg-orange-50 p-6">
+            <h2 className="font-semibold text-orange-900">Modification du Learning Agreement en cours</h2>
+            <p className="mt-1 text-sm text-orange-700">
+              Vous avez demandé une modification de votre Learning Agreement. Veuillez uploader votre nouveau Learning Agreement modifié puis le soumettre pour re-validation.
+            </p>
+            <div className="mt-4 text-sm text-orange-800">
+              <p className="font-medium">Rappel pour la modification :</p>
+              <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li>Précisez les cours supprimés et ceux de remplacement</li>
+                <li>Mettez à jour sur Mobility Online</li>
+                <li>Remplissez la page 2 du LA &quot;Modification du programme d&apos;études&quot;</li>
+              </ul>
+            </div>
           </div>
-        </div>
+
+          {/* Upload LA modifié */}
+          <div className="rounded-sm border-2 border-orange-300 bg-white p-6 space-y-4">
+            <h2 className="font-semibold text-orange-900 flex items-center gap-2">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+              </svg>
+              Dépôt du Learning Agreement Modifié
+            </h2>
+
+            <div>
+              <input
+                ref={modifFileInputRef}
+                type="file"
+                accept=".pdf,application/pdf"
+                onChange={handleModifFileUpload}
+                className="hidden"
+                id="modif-pdf-upload"
+              />
+              <label htmlFor="modif-pdf-upload">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={uploadingModif}
+                  onClick={() => modifFileInputRef.current?.click()}
+                >
+                  {uploadingModif ? (
+                    <>
+                      <svg className="h-4 w-4 animate-spin mr-2" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Upload en cours...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                      </svg>
+                      Uploader le Learning Agreement modifié (PDF)
+                    </>
+                  )}
+                </Button>
+              </label>
+              {uploadModifError && (
+                <p className="mt-2 text-sm text-red-600">{uploadModifError}</p>
+              )}
+            </div>
+
+            {modifiedFiles.length > 0 ? (
+              <div className="space-y-2">
+                {modifiedFiles.map((file) => (
+                  <FileItem
+                    key={file.id}
+                    file={file}
+                    canDelete
+                    onDelete={() => handleDeleteFile(file)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-sm">Aucun fichier modifié uploadé.</p>
+            )}
+
+            <div className="border-t border-orange-200 pt-4">
+              <p className="text-sm text-gray-600 mb-3">
+                {modifiedFiles.length === 0
+                  ? 'Uploadez votre Learning Agreement modifié avant de soumettre.'
+                  : 'Votre Learning Agreement modifié est prêt à être soumis pour re-validation.'}
+              </p>
+              <Button
+                onClick={handleSubmitModification}
+                disabled={modifiedFiles.length === 0 || submitting}
+              >
+                {submitting ? 'Soumission en cours...' : 'Soumettre le LA modifié pour re-validation'}
+              </Button>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Guide étapes suivantes */}
