@@ -6,6 +6,7 @@ export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
   revision: 'En révision',
   validated_major: 'Validé par le responsable',
   validated_final: 'Validé (final)',
+  modification_requested: 'Modification demandée',
   rejected: 'Refusé',
 }
 
@@ -15,6 +16,7 @@ export const APPLICATION_STATUS_COLORS: Record<ApplicationStatus, string> = {
   revision: 'bg-yellow-100 text-yellow-800',
   validated_major: 'bg-purple-100 text-purple-800',
   validated_final: 'bg-green-100 text-green-800',
+  modification_requested: 'bg-orange-100 text-orange-800',
   rejected: 'bg-red-100 text-red-800',
 }
 

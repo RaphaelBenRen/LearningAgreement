@@ -47,6 +47,7 @@ export function DashboardFilterBar({
                         { value: 'revision', label: 'En révision' },
                         { value: 'validated_major', label: 'Validé (Majeure)' },
                         { value: 'validated_final', label: 'Validé (Final)' },
+                        { value: 'modification_requested', label: 'Modification demandée' },
                         { value: 'rejected', label: 'Refusé' },
                     ]}
                     className="rounded-sm border-slate-300 focus:border-blue-900 focus:ring-blue-900"

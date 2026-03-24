@@ -29,12 +29,13 @@ interface InternationalStatsProps {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#8dd1e1'];
 const STATUS_COLORS: Record<string, string> = {
-    draft: '#94a3b8', // slate-400
-    submitted: '#1e3a8a', // blue-900
-    revision: '#d97706', // amber-600
-    validated_major: '#581c87', // purple-900
-    validated_final: '#047857', // emerald-700
-    rejected: '#b91c1c', // red-700
+    draft: '#94a3b8',
+    submitted: '#1e3a8a',
+    revision: '#d97706',
+    validated_major: '#581c87',
+    validated_final: '#047857',
+    modification_requested: '#ea580c',
+    rejected: '#b91c1c',
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -43,6 +44,7 @@ const STATUS_LABELS: Record<string, string> = {
     revision: 'En révision',
     validated_major: 'Validé Resp.',
     validated_final: 'Validé Final',
+    modification_requested: 'Modif. demandée',
     rejected: 'Rejeté',
 }
 

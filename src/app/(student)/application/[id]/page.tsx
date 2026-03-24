@@ -32,6 +32,10 @@ export default function ApplicationDetailPage() {
   const [submitting, setSubmitting] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [showModificationForm, setShowModificationForm] = useState(false)
+  const [modificationReason, setModificationReason] = useState('')
+  const [modificationCustomReason, setModificationCustomReason] = useState('')
+  const [requestingModification, setRequestingModification] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +93,7 @@ export default function ApplicationDetailPage() {
     fetchData()
   }, [applicationId, router])
 
-  const canEdit = application?.status === 'draft' || application?.status === 'revision'
+  const canEdit = application?.status === 'draft' || application?.status === 'revision' || application?.status === 'modification_requested'
   const canSubmit = canEdit && files.length > 0
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,6 +184,88 @@ export default function ApplicationDetailPage() {
     }
 
     setSubmitting(false)
+  }
+
+  const MODIFICATION_REASONS = [
+    'Un ou plusieurs cours ne sont plus proposés par l\'université d\'accueil',
+    'L\'université d\'accueil n\'a pas accepté l\'inscription à un ou plusieurs cours (plus de places disponibles)',
+    'Changement d\'emploi du temps ou conflit d\'horaires entre les cours',
+    'Cours ne correspondant pas au contenu attendu après vérification sur place',
+    'Recommandation du coordinateur académique de l\'université d\'accueil',
+    'Autre',
+  ]
+
+  const handleRequestModification = async () => {
+    const reason = modificationReason === 'Autre'
+      ? modificationCustomReason.trim()
+      : modificationReason
+
+    if (!reason) return
+
+    setRequestingModification(true)
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    // Message dans le chat
+    const { data: newMsg } = await supabase
+      .from('messages')
+      .insert({
+        application_id: applicationId,
+        sender_id: user.id,
+        content: `[Demande de modification du Learning Agreement]\nMotif : ${reason}`,
+      })
+      .select('*, sender:profiles(*)')
+      .single()
+
+    if (newMsg) {
+      setMessages((prev) => [...prev, newMsg as MessageWithSender])
+    }
+
+    // Changer le statut
+    const { error } = await supabase
+      .from('applications')
+      .update({ status: 'modification_requested' })
+      .eq('id', applicationId)
+
+    if (!error) {
+      setApplication((prev) => prev ? { ...prev, status: 'modification_requested' } : null)
+      setShowModificationForm(false)
+      setModificationReason('')
+      setModificationCustomReason('')
+      toast.success('Demande de modification envoyée')
+
+      // Notifier le responsable de majeure
+      if (application?.major_head_id) {
+        await supabase.from('notifications').insert({
+          user_id: application.major_head_id,
+          application_id: applicationId,
+          message: `${currentUser?.full_name} demande une modification de son Learning Agreement`,
+          link: `/admin/application/${applicationId}`
+        })
+      }
+
+      // Notifier le service international (tous les users avec role 'international')
+      const { data: internationalUsers } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('role', 'international')
+
+      if (internationalUsers) {
+        for (const intUser of internationalUsers) {
+          await supabase.from('notifications').insert({
+            user_id: intUser.id,
+            application_id: applicationId,
+            message: `${currentUser?.full_name} demande une modification de son Learning Agreement`,
+            link: `/international/application/${applicationId}`
+          })
+        }
+      }
+    } else {
+      toast.error('Erreur lors de la demande de modification')
+    }
+
+    setRequestingModification(false)
   }
 
   const handleDeleteFile = async (file: FileType) => {
@@ -444,16 +530,100 @@ export default function ApplicationDetailPage() {
 
       {application.status === 'validated_final' && (
         <div className="rounded-sm border border-green-200 bg-green-50 p-6">
-          <div className="flex items-center gap-3">
-            <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-              <h2 className="font-semibold text-green-900">Learning Agreement validé !</h2>
-              <p className="text-sm text-green-700">
-                Votre Learning Agreement a été validé par toutes les parties.
-              </p>
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h2 className="font-semibold text-green-900">Learning Agreement validé !</h2>
+                <p className="text-sm text-green-700">
+                  Votre Learning Agreement a été validé par toutes les parties.
+                </p>
+              </div>
             </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setShowModificationForm(true)}
+              className="whitespace-nowrap"
+            >
+              Demander une modification
+            </Button>
+          </div>
+
+          {showModificationForm && (
+            <div className="mt-4 rounded-sm border border-orange-200 bg-orange-50 p-5 space-y-4">
+              <h3 className="font-semibold text-orange-900">Demande de modification du Learning Agreement</h3>
+              <p className="text-sm text-orange-700">
+                Sélectionnez le motif de votre demande de modification. Votre dossier devra être re-validé par votre responsable de majeure puis par le Service International.
+              </p>
+
+              <div className="space-y-2">
+                {MODIFICATION_REASONS.map((reason) => (
+                  <label key={reason} className="flex items-start gap-3 p-3 rounded-sm bg-white border border-orange-100 cursor-pointer hover:border-orange-300 transition-colors">
+                    <input
+                      type="radio"
+                      name="modification_reason"
+                      value={reason}
+                      checked={modificationReason === reason}
+                      onChange={(e) => setModificationReason(e.target.value)}
+                      className="mt-0.5 text-orange-600 focus:ring-orange-500"
+                    />
+                    <span className="text-sm text-slate-800">{reason}</span>
+                  </label>
+                ))}
+              </div>
+
+              {modificationReason === 'Autre' && (
+                <textarea
+                  className="w-full rounded-sm border border-orange-200 p-3 text-sm focus:border-orange-500 focus:ring-orange-500"
+                  placeholder="Décrivez précisément le motif de votre demande de modification..."
+                  value={modificationCustomReason}
+                  onChange={(e) => setModificationCustomReason(e.target.value)}
+                  rows={3}
+                />
+              )}
+
+              <div className="flex gap-3">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => { setShowModificationForm(false); setModificationReason(''); setModificationCustomReason('') }}
+                >
+                  Annuler
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleRequestModification}
+                  disabled={
+                    requestingModification ||
+                    !modificationReason ||
+                    (modificationReason === 'Autre' && !modificationCustomReason.trim())
+                  }
+                  className="bg-orange-600 hover:bg-orange-700"
+                >
+                  {requestingModification ? 'Envoi...' : 'Envoyer la demande'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {application.status === 'modification_requested' && (
+        <div className="rounded-sm border border-orange-200 bg-orange-50 p-6">
+          <h2 className="font-semibold text-orange-900">Modification du Learning Agreement en cours</h2>
+          <p className="mt-1 text-sm text-orange-700">
+            Vous avez demandé une modification de votre Learning Agreement. Veuillez uploader votre nouveau Learning Agreement modifié puis le soumettre pour re-validation.
+          </p>
+          <div className="mt-4 text-sm text-orange-800">
+            <p className="font-medium">Rappel pour la modification :</p>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li>Précisez les cours supprimés et ceux de remplacement</li>
+              <li>Mettez à jour sur Mobility Online</li>
+              <li>Remplissez la page 2 du LA &quot;Modification du programme d&apos;études&quot;</li>
+            </ul>
           </div>
         </div>
       )}

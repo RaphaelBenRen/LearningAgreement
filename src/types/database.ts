@@ -6,6 +6,7 @@ export type ApplicationStatus =
   | 'revision'
   | 'validated_major'
   | 'validated_final'
+  | 'modification_requested'
   | 'rejected'
 
 export type CourseLevel = 'M1' | 'M2'

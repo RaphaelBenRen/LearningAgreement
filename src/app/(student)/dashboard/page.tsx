@@ -83,12 +83,14 @@ export default async function StudentDashboard() {
             <StatusTimeline currentStatus={currentApplication.status} />
           </div>
 
-          {(currentApplication.status === 'draft' || currentApplication.status === 'revision') && (
+          {(currentApplication.status === 'draft' || currentApplication.status === 'revision' || currentApplication.status === 'modification_requested') && (
             <div className="mt-6 rounded-lg bg-blue-50 p-4">
               <p className="text-sm text-blue-800">
                 <strong>Action requise :</strong>{' '}
                 {currentApplication.status === 'draft'
                   ? 'Complétez votre dossier et soumettez-le à votre responsable de majeure.'
+                  : currentApplication.status === 'modification_requested'
+                  ? 'Uploadez votre Learning Agreement modifié et re-soumettez-le pour validation.'
                   : 'Votre responsable a demandé des modifications. Consultez les commentaires et corrigez votre dossier.'}
               </p>
               <Link

@@ -101,6 +101,7 @@ export async function GET() {
       'application_submitted',
       'application_validated_major',
       'application_validated_final',
+      'application_modification_requested',
       'application_rejected',
       'new_message',
     ],

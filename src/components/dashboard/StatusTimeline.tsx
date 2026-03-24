@@ -17,6 +17,7 @@ const statusOrder: Record<ApplicationStatus, number> = {
   revision: 1, // Même niveau que soumis
   validated_major: 2,
   validated_final: 3,
+  modification_requested: 1, // Retour au niveau soumis (re-validation nécessaire)
   rejected: -1,
 }
 
@@ -24,6 +25,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
   const currentIndex = statusOrder[currentStatus]
   const isRejected = currentStatus === 'rejected'
   const isRevision = currentStatus === 'revision'
+  const isModificationRequested = currentStatus === 'modification_requested'
 
   if (isRejected) {
     return (
@@ -45,6 +47,17 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
           </svg>
           <span className="text-sm font-medium text-yellow-800">
             Révision demandée - veuillez corriger votre dossier
+          </span>
+        </div>
+      )}
+
+      {isModificationRequested && (
+        <div className="mb-4 flex items-center gap-2 rounded-sm bg-orange-50 p-3">
+          <svg className="h-5 w-5 text-orange-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.182" />
+          </svg>
+          <span className="text-sm font-medium text-orange-800">
+            Modification du Learning Agreement en cours - nouvelle validation requise
           </span>
         </div>
       )}

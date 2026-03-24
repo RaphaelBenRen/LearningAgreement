@@ -11,6 +11,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
     revision: { label: 'En révision', className: 'bg-amber-50 text-amber-700 border-amber-200' },
     validated_major: { label: 'Validé (Majeure)', className: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
     validated_final: { label: 'Validé (Final)', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    modification_requested: { label: 'Modification demandée', className: 'bg-orange-50 text-orange-700 border-orange-200' },
     rejected: { label: 'Refusé', className: 'bg-red-50 text-red-700 border-red-200' },
   }
 
