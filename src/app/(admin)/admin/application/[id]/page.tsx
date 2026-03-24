@@ -246,6 +246,25 @@ export default function AdminApplicationDetailPage() {
         <p className="text-slate-600">{application.university?.city || application.university_city}, {application.university?.country || application.university_country}</p>
       </div>
 
+      {/* Modification demandée par l'étudiant */}
+      {application.status === 'modification_requested' && (
+        <div className="rounded-sm border-2 border-orange-200 bg-orange-50 p-6">
+          <div className="flex items-start gap-3">
+            <svg className="h-6 w-6 text-orange-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.182" />
+            </svg>
+            <div>
+              <h2 className="font-semibold text-orange-900">Modification du Learning Agreement demandée</h2>
+              <p className="mt-1 text-sm text-orange-700">
+                L&apos;étudiant a demandé une modification de son Learning Agreement après validation finale.
+                Le dossier est en attente de re-soumission par l&apos;étudiant avec le LA modifié.
+                Consultez la discussion ci-dessous pour voir le motif.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Actions de validation */}
       {application.status === 'submitted' && (
         <div className="rounded-sm border border-slate-200 bg-white p-6 space-y-4">
