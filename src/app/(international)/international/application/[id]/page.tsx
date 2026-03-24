@@ -121,6 +121,9 @@ export default function InternationalApplicationDetailPage() {
     setValidating(true)
     const supabase = createClient()
 
+    const supabase2 = createClient()
+    const { data: { user } } = await supabase2.auth.getUser()
+
     const { error } = await supabase
       .from('applications')
       .update({ status: 'validated_final' })
@@ -128,6 +131,23 @@ export default function InternationalApplicationDetailPage() {
 
     if (!error) {
       setApplication((prev) => prev ? { ...prev, status: 'validated_final' } : null)
+
+      // Message automatique dans le chat
+      if (user) {
+        const { data: newMsg } = await supabase
+          .from('messages')
+          .insert({
+            application_id: applicationId,
+            sender_id: user.id,
+            content: `Bonjour,\n\nVotre Learning Agreement a été validé et signé par le Service International. Vous trouverez le document signé dans la section "Learning Agreement Signé par service Inter" ci-dessus.\n\nCordialement,\nLe Service International`,
+          })
+          .select('*, sender:profiles(*)')
+          .single()
+
+        if (newMsg) {
+          setMessages((prev) => [...prev, newMsg as MessageWithSender])
+        }
+      }
 
       // Notify Student
       if (student?.id) {
@@ -280,7 +300,38 @@ export default function InternationalApplicationDetailPage() {
         </div>
       </div>
 
+      {/* Fichiers */}
+      <div className="space-y-6">
+        {/* Fichiers Étudiant */}
+        <div className="rounded-sm border border-slate-200 bg-white p-6">
+          <h2 className="font-semibold text-blue-900 mb-4">Documents Étudiant</h2>
+          <FileList files={files.filter(f => f.uploader_id === application.student_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
+          {files.filter(f => f.uploader_id === application.student_id).length === 0 && (
+            <p className="text-slate-500 text-sm">Aucun document.</p>
+          )}
+        </div>
 
+        {/* Fichiers Responsable */}
+        <div className="rounded-sm border border-slate-200 bg-white p-6">
+          <h2 className="font-semibold text-blue-900 mb-4">Documents Responsable Majeure</h2>
+          <FileList files={files.filter(f => f.uploader_id === application.major_head_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
+          {files.filter(f => f.uploader_id === application.major_head_id).length === 0 && (
+            <p className="text-slate-500 text-sm">Aucun document.</p>
+          )}
+        </div>
+
+        {/* Fichiers International */}
+        <div className="rounded-sm border border-slate-200 bg-white p-6">
+          <h2 className="font-semibold text-blue-900 mb-4">Learning Agreement Signé par service Inter</h2>
+          <FileList files={files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
+          <div className="mt-4">
+            <FileUpload
+              applicationId={applicationId}
+              onFileUploaded={(newFile) => setFiles((prev) => [newFile, ...prev])}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Actions de validation finale */}
       {canValidateFinal && (
@@ -296,7 +347,7 @@ export default function InternationalApplicationDetailPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
               <p className="text-sm text-amber-800">
-                Vous devez d&apos;abord uploader le Learning Agreement signé ci-dessous avant de pouvoir valider.
+                Vous devez d&apos;abord uploader le Learning Agreement signé ci-dessus avant de pouvoir valider.
               </p>
             </div>
           )}
@@ -317,14 +368,6 @@ export default function InternationalApplicationDetailPage() {
               className="rounded-sm"
             >
               Demander des modifications
-            </Button>
-            <Button
-              variant="danger"
-              onClick={handleReject}
-              disabled={validating}
-              className="rounded-sm"
-            >
-              Refus définitif
             </Button>
           </div>
 
@@ -374,39 +417,6 @@ export default function InternationalApplicationDetailPage() {
           </div>
         </div>
       )}
-
-      {/* Fichiers */}
-      <div className="space-y-6">
-        {/* Fichiers Étudiant */}
-        <div className="rounded-sm border border-slate-200 bg-white p-6">
-          <h2 className="font-semibold text-blue-900 mb-4">Documents Étudiant</h2>
-          <FileList files={files.filter(f => f.uploader_id === application.student_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
-          {files.filter(f => f.uploader_id === application.student_id).length === 0 && (
-            <p className="text-slate-500 text-sm">Aucun document.</p>
-          )}
-        </div>
-
-        {/* Fichiers Responsable */}
-        <div className="rounded-sm border border-slate-200 bg-white p-6">
-          <h2 className="font-semibold text-blue-900 mb-4">Documents Responsable Majeure</h2>
-          <FileList files={files.filter(f => f.uploader_id === application.major_head_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
-          {files.filter(f => f.uploader_id === application.major_head_id).length === 0 && (
-            <p className="text-slate-500 text-sm">Aucun document.</p>
-          )}
-        </div>
-
-        {/* Fichiers International */}
-        <div className="rounded-sm border border-slate-200 bg-white p-6">
-          <h2 className="font-semibold text-blue-900 mb-4">Learning Agreement Signé par service Inter</h2>
-          <FileList files={files.filter(f => f.uploader_id !== application.student_id && f.uploader_id !== application.major_head_id)} currentUserId={currentUser?.id} onFileDeleted={(fileId) => setFiles(prev => prev.filter(f => f.id !== fileId))} />
-          <div className="mt-4">
-            <FileUpload
-              applicationId={applicationId}
-              onFileUploaded={(newFile) => setFiles((prev) => [newFile, ...prev])}
-            />
-          </div>
-        </div>
-      </div>
 
       {/* Discussion */}
       <div className="rounded-sm border border-slate-200 bg-white p-6">
