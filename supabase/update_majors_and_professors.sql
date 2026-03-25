@@ -18,9 +18,9 @@ CREATE POLICY "Authenticated users can view profile_majors"
   TO authenticated
   USING (true);
 
--- Supprimer les anciennes majeures (CASCADE sur les FK)
--- D'abord, dissocier les profiles des anciennes majeures
-UPDATE profiles SET major_id = NULL WHERE role = 'major_head';
+-- Supprimer les anciennes majeures
+-- D'abord, dissocier TOUS les profils (étudiants inclus) des anciennes majeures
+UPDATE profiles SET major_id = NULL;
 
 -- Supprimer les anciennes majeures
 DELETE FROM majors;
