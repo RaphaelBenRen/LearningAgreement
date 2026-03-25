@@ -127,6 +127,23 @@ export interface Database {
           created_at?: string
         }
       }
+      profile_majors: {
+        Row: {
+          id: string
+          profile_id: string
+          major_id: string
+        }
+        Insert: {
+          id?: string
+          profile_id: string
+          major_id: string
+        }
+        Update: {
+          id?: string
+          profile_id?: string
+          major_id?: string
+        }
+      }
       applications: {
         Row: {
           id: string

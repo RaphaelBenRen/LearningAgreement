@@ -54,15 +54,30 @@ export default function NewApplicationPage() {
           .single()
 
         // Filtrer les responsables selon la majeure de l'étudiant
+        // via la table de liaison profile_majors
         if (profile?.major_id && heads) {
-          const filteredHeads = heads.filter(h => h.major_id === profile.major_id)
-          // Si on a des responsables correspondants, on ne garde qu'eux. 
-          // Sinon (cas bizarroïde), on garde la liste complète ou on gère le cas.
-          if (filteredHeads.length > 0) {
-            setMajorHeads(filteredHeads)
-            // Auto-select if only one
-            if (filteredHeads.length === 1) {
-              setFormData(prev => ({ ...prev, majorHeadId: filteredHeads[0].id }))
+          const { data: majorLinks } = await supabase
+            .from('profile_majors')
+            .select('profile_id')
+            .eq('major_id', profile.major_id)
+
+          if (majorLinks && majorLinks.length > 0) {
+            const headIds = majorLinks.map(l => l.profile_id)
+            const filteredHeads = heads.filter(h => headIds.includes(h.id))
+            if (filteredHeads.length > 0) {
+              setMajorHeads(filteredHeads)
+              if (filteredHeads.length === 1) {
+                setFormData(prev => ({ ...prev, majorHeadId: filteredHeads[0].id }))
+              }
+            }
+          } else {
+            // Fallback : filtre par major_id sur le profil (ancien système)
+            const filteredHeads = heads.filter(h => h.major_id === profile.major_id)
+            if (filteredHeads.length > 0) {
+              setMajorHeads(filteredHeads)
+              if (filteredHeads.length === 1) {
+                setFormData(prev => ({ ...prev, majorHeadId: filteredHeads[0].id }))
+              }
             }
           }
         }
