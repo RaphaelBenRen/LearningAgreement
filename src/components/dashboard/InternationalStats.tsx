@@ -97,7 +97,7 @@ export function InternationalStats({ applications, majors }: InternationalStatsP
                 value: counts[majorId],
                 color: COLORS[index % COLORS.length]
             }
-        }).sort((a, b) => b.value - a.value)
+        }).filter(item => item.name !== 'Inconnu').sort((a, b) => b.value - a.value)
     }, [applications, majors])
 
     // CHART: Top Universities
@@ -110,8 +110,9 @@ export function InternationalStats({ applications, majors }: InternationalStatsP
 
         const shortenUniName = (name: string): string => {
             // Extraire l'acronyme entre parenthèses s'il existe : "University of X (ABC)" → "ABC"
-            const acronymMatch = name.match(/\(([A-Z0-9/]+(?:\s*[-/]\s*[A-Za-z]+)?)\)\s*$/)
-            if (acronymMatch) return acronymMatch[1]
+            // Extraire l'acronyme entre parenthèses et nettoyer
+            const acronymMatch = name.match(/\(([^)]+)\)\s*$/)
+            if (acronymMatch) return acronymMatch[1].replace(/[()]/g, '').trim()
             // Noms connus courts
             if (name.length > 25) {
                 // Prendre les initiales des mots principaux (ignorer of, de, di, du, etc.)
