@@ -90,9 +90,10 @@ export function InternationalStats({ applications, majors }: InternationalStatsP
         })
 
         return Object.keys(counts).map((majorId, index) => {
-            const majorName = majors.find(m => m.id === majorId)?.name || 'Inconnu'
+            const major = majors.find(m => m.id === majorId)
+            const majorLabel = major?.code || major?.name || 'Inconnu'
             return {
-                name: majorName,
+                name: majorLabel,
                 value: counts[majorId],
                 color: COLORS[index % COLORS.length]
             }
@@ -107,10 +108,25 @@ export function InternationalStats({ applications, majors }: InternationalStatsP
             counts[uni] = (counts[uni] || 0) + 1
         })
 
+        const shortenUniName = (name: string): string => {
+            // Extraire l'acronyme entre parenthèses s'il existe : "University of X (ABC)" → "ABC"
+            const acronymMatch = name.match(/\(([A-Z0-9/]+(?:\s*[-/]\s*[A-Za-z]+)?)\)\s*$/)
+            if (acronymMatch) return acronymMatch[1]
+            // Noms connus courts
+            if (name.length > 25) {
+                // Prendre les initiales des mots principaux (ignorer of, de, di, du, etc.)
+                const words = name.split(/\s+/).filter(w => !['of', 'de', 'di', 'du', 'the', 'and', 'et', 'la', 'le', 'des', 'in'].includes(w.toLowerCase()))
+                if (words.length >= 3) {
+                    return words.map(w => w[0]).join('').toUpperCase().slice(0, 6)
+                }
+            }
+            return name.length > 20 ? name.slice(0, 20) + '…' : name
+        }
+
         return Object.entries(counts)
-            .map(([name, value]) => ({ name, value }))
+            .map(([name, value]) => ({ name: shortenUniName(name), fullName: name, value }))
             .sort((a, b) => b.value - a.value)
-            .slice(0, 10) // Top 10
+            .slice(0, 10)
     }, [applications])
 
     return (
