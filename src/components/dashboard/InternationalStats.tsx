@@ -49,6 +49,24 @@ const STATUS_LABELS: Record<string, string> = {
     rejected: 'Rejeté',
 }
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+        const data = payload[0].payload
+        return (
+            <div className="rounded-lg border border-slate-100 bg-white/95 p-4 shadow-xl backdrop-blur-sm">
+                <p className="mb-2 text-sm font-semibold text-slate-900">{data.fullName}</p>
+                <div className="flex items-center gap-3">
+                    <div className="h-2 w-2 rounded-full bg-blue-600"></div>
+                    <p className="text-sm font-medium text-slate-700">
+                        {data.value} dossier{data.value > 1 ? 's' : ''}
+                    </p>
+                </div>
+            </div>
+        )
+    }
+    return null
+}
+
 export function InternationalStats({ applications, majors }: InternationalStatsProps) {
     const router = useRouter()
 
@@ -222,17 +240,41 @@ export function InternationalStats({ applications, majors }: InternationalStatsP
                             <BarChart
                                 data={universityData}
                                 margin={{
-                                    top: 5,
-                                    right: 30,
-                                    left: 20,
-                                    bottom: 5,
+                                    top: 10,
+                                    right: 15,
+                                    left: -15,
+                                    bottom: 0,
                                 }}
                             >
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
-                                <Bar dataKey="value" name="Nombre de dossiers" fill="#1e3a8a" radius={[4, 4, 0, 0]} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                <XAxis 
+                                    dataKey="name" 
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#64748b', fontSize: 11 }}
+                                    dy={10}
+                                />
+                                <YAxis 
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#64748b', fontSize: 11 }}
+                                    allowDecimals={false}
+                                />
+                                <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f1f5f9' }} />
+                                <Bar 
+                                    dataKey="value" 
+                                    radius={[6, 6, 0, 0]}
+                                    maxBarSize={48}
+                                    animationDuration={1500}
+                                >
+                                    {universityData.map((entry, index) => (
+                                        <Cell 
+                                            key={`cell-${index}`} 
+                                            fill={index < 3 ? '#2563eb' : '#93c5fd'} 
+                                            className="transition-all duration-300 hover:opacity-80"
+                                        />
+                                    ))}
+                                </Bar>
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
