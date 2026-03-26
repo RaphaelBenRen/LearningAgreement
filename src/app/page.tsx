@@ -38,7 +38,7 @@ export default function Home() {
             <span className="text-blue-700">simplement</span>
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600">
-            Plateforme dédiée aux étudiants ING5 de l&apos;ECE Paris pour faciliter
+            Plateforme dédiée aux étudiants de l&apos;ECE Paris pour faciliter
             la validation de vos cours en échange international.
           </p>
           <div className="mt-10 flex justify-center gap-4">
