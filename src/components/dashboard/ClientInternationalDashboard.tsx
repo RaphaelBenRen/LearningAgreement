@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { StatusBadge } from '@/components/dashboard/StatusBadge'
 import { DashboardFilterBar } from '@/components/dashboard/DashboardFilterBar'
 import type { Application, ApplicationStatus, Profile, AcademicYear, Major, University } from '@/types/database'
@@ -22,8 +22,11 @@ interface ClientInternationalDashboardProps {
 
 export function ClientInternationalDashboard({ applications, majors }: ClientInternationalDashboardProps) {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const initialStatus = (searchParams.get('status') as ApplicationStatus | null) || 'all'
+
     const [searchTerm, setSearchTerm] = useState('')
-    const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all')
+    const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>(initialStatus)
     const [sortBy, setSortBy] = useState('updated_desc')
     const [majorFilter, setMajorFilter] = useState<string | 'all'>('all')
 

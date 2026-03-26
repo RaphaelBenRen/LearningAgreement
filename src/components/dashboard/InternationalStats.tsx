@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import {
     BarChart,
     Bar,
@@ -49,6 +50,7 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 export function InternationalStats({ applications, majors }: InternationalStatsProps) {
+    const router = useRouter()
 
     // KPI: Total Students (Unique Student IDs)
     const totalStudents = useMemo(() => {
@@ -70,6 +72,7 @@ export function InternationalStats({ applications, majors }: InternationalStatsP
             counts[app.status] = (counts[app.status] || 0) + 1
         })
         return Object.keys(STATUS_LABELS).map(status => ({
+            statusKey: status,
             name: STATUS_LABELS[status],
             value: counts[status] || 0,
             color: STATUS_COLORS[status]
@@ -166,6 +169,13 @@ export function InternationalStats({ applications, majors }: InternationalStatsP
                                     outerRadius={80}
                                     fill="#8884d8"
                                     dataKey="value"
+                                    onClick={(data) => {
+                                        const status = data?.payload?.statusKey || data?.statusKey;
+                                        if (status) {
+                                            router.push(`/international/dashboard?status=${status}`);
+                                        }
+                                    }}
+                                    style={{ cursor: 'pointer' }}
                                 >
                                     {statusData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} />
